@@ -1,0 +1,921 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Loan Factory Paid Coaching Platform</title>
+    <style>
+      :root {
+        --lf-orange: #f26a1f;
+        --lf-orange-dark: #c9531a;
+        --lf-orange-soft: #fff1e8;
+        --lf-navy: #111111;
+        --lf-navy-dark: #000000;
+        --lf-charcoal: #2b2b2b;
+        --lf-slate: #5f6368;
+        --lf-mist: #f5f5f5;
+        --lf-line: #d9d9d9;
+        --white: #ffffff;
+        --shadow-card: 0 1px 2px rgba(15, 23, 42, 0.04), 0 1px 3px rgba(15, 23, 42, 0.06);
+        --shadow-lift: 0 18px 56px rgba(0, 0, 0, 0.18);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-snap-type: y mandatory;
+        background: var(--lf-navy-dark);
+        color: var(--lf-navy);
+      }
+
+      body {
+        margin: 0;
+        font-family:
+          ui-sans-serif,
+          system-ui,
+          -apple-system,
+          "Segoe UI",
+          Roboto,
+          "Helvetica Neue",
+          Arial,
+          sans-serif;
+        background: var(--lf-navy-dark);
+        color: var(--lf-navy);
+        -webkit-font-smoothing: antialiased;
+      }
+
+      .deck {
+        width: 100%;
+      }
+
+      .slide-wrap {
+        min-height: 100vh;
+        padding: 24px;
+        scroll-snap-align: start;
+        background:
+          radial-gradient(circle at 14% 18%, rgba(242, 106, 31, 0.18), transparent 26%),
+          linear-gradient(180deg, #050505 0%, #111111 100%);
+      }
+
+      .slide {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        min-height: calc(100vh - 48px);
+        width: min(1280px, calc(100vw - 48px));
+        margin: 0 auto;
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        border-radius: 28px;
+        background: var(--white);
+        box-shadow: var(--shadow-lift);
+      }
+
+      .slide.dark {
+        color: var(--white);
+        background:
+          linear-gradient(rgba(0, 0, 0, 0.66), rgba(0, 0, 0, 0.72)),
+          url("../../../public/media/dark-hero-background.png") center / cover,
+          var(--lf-navy-dark);
+      }
+
+      .slide.light {
+        background:
+          linear-gradient(135deg, rgba(255, 255, 255, 0.97), rgba(245, 245, 245, 0.92)),
+          url("../../../public/media/light-hero-background.png") center / cover,
+          var(--white);
+      }
+
+      .slide-inner {
+        position: relative;
+        z-index: 2;
+        display: flex;
+        flex: 1;
+        flex-direction: column;
+        padding: 54px 64px 44px;
+      }
+
+      .brand-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 28px;
+        min-height: 40px;
+        margin-bottom: 40px;
+      }
+
+      .brand-logo {
+        height: 30px;
+        width: auto;
+        object-fit: contain;
+      }
+
+      .program-logos {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .program-logos img {
+        height: 38px;
+        width: 38px;
+        border-radius: 12px;
+        object-fit: contain;
+        background: rgba(255, 255, 255, 0.92);
+        padding: 4px;
+      }
+
+      .eyebrow {
+        color: var(--lf-orange);
+        font-size: 13px;
+        font-weight: 800;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+
+      h1,
+      h2,
+      h3,
+      p {
+        margin: 0;
+      }
+
+      .headline {
+        max-width: 930px;
+        font-size: clamp(44px, 6vw, 76px);
+        line-height: 0.94;
+        font-weight: 800;
+        letter-spacing: 0;
+      }
+
+      .headline.medium {
+        max-width: 920px;
+        font-size: clamp(38px, 4.7vw, 58px);
+        line-height: 1;
+      }
+
+      .metal {
+        background:
+          linear-gradient(110deg, #ffffff 0%, #c8c8c8 18%, #f26a1f 32%, #ffffff 48%, #9c9c9c 64%, #ffffff 82%, #f4a26f 100%);
+        background-size: 220% 100%;
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        text-shadow: 0 10px 32px rgba(0, 0, 0, 0.26);
+      }
+
+      .metal-dark {
+        background:
+          linear-gradient(110deg, #1d1d1d 0%, #686868 18%, #f26a1f 34%, #111111 50%, #777 68%, #000 100%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+
+      .subhead {
+        max-width: 760px;
+        margin-top: 18px;
+        color: rgba(255, 255, 255, 0.82);
+        font-size: 22px;
+        line-height: 1.36;
+      }
+
+      .light .subhead {
+        color: var(--lf-slate);
+      }
+
+      .grid {
+        display: grid;
+        gap: 18px;
+      }
+
+      .grid.two {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .grid.three {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .grid.split {
+        grid-template-columns: 0.92fr 1.08fr;
+        align-items: stretch;
+      }
+
+      .card {
+        border: 1px solid var(--lf-line);
+        border-radius: 18px;
+        background: var(--white);
+        padding: 22px;
+        box-shadow: var(--shadow-card);
+      }
+
+      .dark .card,
+      .dark-card {
+        border-color: rgba(255, 255, 255, 0.16);
+        background: rgba(255, 255, 255, 0.08);
+        color: var(--white);
+        box-shadow: none;
+      }
+
+      .card h3,
+      .mini-card h3 {
+        font-size: 22px;
+        line-height: 1.12;
+        font-weight: 760;
+      }
+
+      .card p,
+      .mini-card p,
+      li {
+        color: var(--lf-slate);
+        font-size: 18px;
+        line-height: 1.45;
+      }
+
+      .dark .card p,
+      .dark li,
+      .dark-card p {
+        color: rgba(255, 255, 255, 0.78);
+      }
+
+      .price {
+        margin-top: 16px;
+        color: var(--lf-navy);
+        font-size: 54px;
+        font-weight: 800;
+        line-height: 1;
+      }
+
+      .price span {
+        color: var(--lf-slate);
+        font-size: 18px;
+        font-weight: 650;
+      }
+
+      .dark .price {
+        color: var(--white);
+      }
+
+      .dark .price span {
+        color: rgba(255, 255, 255, 0.72);
+      }
+
+      .kicker {
+        display: inline-flex;
+        align-items: center;
+        width: fit-content;
+        border-radius: 999px;
+        background: var(--lf-orange-soft);
+        color: var(--lf-orange-dark);
+        padding: 7px 12px;
+        font-size: 13px;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .list {
+        margin: 20px 0 0;
+        padding-left: 22px;
+      }
+
+      .list li {
+        margin: 9px 0;
+      }
+
+      .big-statement {
+        margin-top: auto;
+        max-width: 930px;
+        font-size: clamp(30px, 4.2vw, 56px);
+        line-height: 1.02;
+        font-weight: 800;
+      }
+
+      .comparison {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        overflow: hidden;
+        border: 1px solid var(--lf-line);
+        border-radius: 18px;
+        background: var(--white);
+        box-shadow: var(--shadow-card);
+      }
+
+      .comparison th,
+      .comparison td {
+        padding: 15px 18px;
+        border-bottom: 1px solid var(--lf-line);
+        border-right: 1px solid var(--lf-line);
+        text-align: left;
+        vertical-align: top;
+        font-size: 16px;
+        line-height: 1.34;
+      }
+
+      .comparison th {
+        color: var(--lf-navy);
+        font-weight: 800;
+        background: var(--lf-mist);
+      }
+
+      .comparison td {
+        color: var(--lf-charcoal);
+      }
+
+      .comparison tr:last-child td {
+        border-bottom: 0;
+      }
+
+      .comparison th:last-child,
+      .comparison td:last-child {
+        border-right: 0;
+      }
+
+      .metric-strip {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 14px;
+        margin-top: 28px;
+      }
+
+      .metric {
+        border: 1px solid rgba(255, 255, 255, 0.16);
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.08);
+        padding: 18px;
+      }
+
+      .metric strong {
+        display: block;
+        color: var(--lf-orange);
+        font-size: 30px;
+        line-height: 1;
+      }
+
+      .metric span {
+        display: block;
+        margin-top: 7px;
+        color: rgba(255, 255, 255, 0.74);
+        font-size: 15px;
+        line-height: 1.35;
+      }
+
+      .callout {
+        margin-top: auto;
+        border-left: 5px solid var(--lf-orange);
+        border-radius: 16px;
+        background: rgba(242, 106, 31, 0.08);
+        padding: 22px 24px;
+      }
+
+      .callout p {
+        color: var(--lf-charcoal);
+        font-size: 22px;
+        font-weight: 720;
+        line-height: 1.34;
+      }
+
+      .notes {
+        width: min(1280px, calc(100vw - 48px));
+        margin: 12px auto 36px;
+        border-radius: 18px;
+        background: #181818;
+        color: rgba(255, 255, 255, 0.78);
+        padding: 18px 22px;
+        font-size: 14px;
+        line-height: 1.55;
+      }
+
+      .notes strong {
+        color: var(--lf-orange);
+      }
+
+      @page {
+        size: 16in 9in;
+        margin: 0;
+      }
+
+      @media print {
+        html,
+        body {
+          width: 16in;
+          height: auto;
+          margin: 0;
+          background: var(--white);
+          scroll-snap-type: none;
+        }
+
+        .deck {
+          width: 16in;
+        }
+
+        .slide-wrap {
+          width: 16in;
+          height: 9in;
+          min-height: 0;
+          padding: 0;
+          overflow: hidden;
+          page-break-after: always;
+          break-after: page;
+          background: var(--white);
+        }
+
+        .slide-wrap:last-child {
+          page-break-after: auto;
+          break-after: auto;
+        }
+
+        .slide {
+          width: 16in;
+          height: 9in;
+          min-height: 0;
+          margin: 0;
+          border: 0;
+          border-radius: 0;
+          box-shadow: none;
+        }
+
+        .slide-inner {
+          padding: 0.62in 0.74in 0.5in;
+        }
+
+        .notes {
+          display: none;
+        }
+      }
+
+      @media (max-width: 900px) {
+        .slide-wrap {
+          padding: 12px;
+        }
+
+        .slide {
+          width: calc(100vw - 24px);
+          min-height: calc(100vh - 24px);
+          border-radius: 18px;
+        }
+
+        .slide-inner {
+          padding: 32px 24px 28px;
+        }
+
+        .grid.two,
+        .grid.three,
+        .grid.split,
+        .metric-strip {
+          grid-template-columns: 1fr;
+        }
+
+        .brand-row {
+          align-items: flex-start;
+          flex-direction: column;
+          margin-bottom: 28px;
+        }
+
+        .comparison {
+          display: block;
+          overflow-x: auto;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="deck">
+      <section class="slide-wrap">
+        <article class="slide dark">
+          <div class="slide-inner">
+            <div class="brand-row">
+              <img class="brand-logo" src="../../../public/images/brand/LoanFactory_Logo_Name_orangeblack.png" alt="Loan Factory" />
+              <div class="program-logos" aria-label="Paid coaching program logos">
+                <img src="../../../public/logos/lo-development/lo-mastery.png" alt="LO Mastery" />
+                <img src="../../../public/logos/lo-development/loan-factory-alliance.png" alt="Loan Factory Alliance" />
+              </div>
+            </div>
+            <p class="eyebrow">Internal leadership meeting</p>
+            <h1 class="headline metal">Loan Factory Paid Coaching Platform</h1>
+            <p class="subhead">LO Mastery and Loan Factory Alliance</p>
+            <div class="metric-strip">
+              <div class="metric"><strong>Level I</strong><span>Loan Factory LO Mastery Coaching</span></div>
+              <div class="metric"><strong>Level II</strong><span>Loan Factory Alliance</span></div>
+              <div class="metric"><strong>Focus</strong><span>Coaching, accountability, resources, rhythm</span></div>
+            </div>
+          </div>
+        </article>
+        <div class="notes"><strong>Presenter note:</strong> Open by making the boundary clear. This is only the paid coaching platform conversation.</div>
+      </section>
+
+      <section class="slide-wrap">
+        <article class="slide light">
+          <div class="slide-inner">
+            <div class="brand-row">
+              <img class="brand-logo" src="../../../public/images/brand/LoanFactory_Logo_Name_orangeblack.png" alt="Loan Factory" />
+              <span class="kicker">Scope</span>
+            </div>
+            <h2 class="headline medium metal-dark">What this deck covers</h2>
+            <div class="grid two" style="margin-top: 34px">
+              <div class="card">
+                <h3>Included</h3>
+                <ul class="list">
+                  <li>Loan Factory LO Mastery Coaching</li>
+                  <li>Loan Factory Alliance</li>
+                  <li>Paid member area</li>
+                  <li>Coaching rhythm, resources, certifications, trackers, scorecards, and leaderboards that appear in the coaching section</li>
+                </ul>
+              </div>
+              <div class="card">
+                <h3>Not included</h3>
+                <p style="margin-top: 14px">Other site sections, non-coaching learning tracks, public-facing programs, and separate growth tools are intentionally out of scope for this deck.</p>
+              </div>
+            </div>
+          </div>
+        </article>
+        <div class="notes"><strong>Presenter note:</strong> Keep the meeting focused on the paid coaching offer, packaging, cadence, and launch decisions.</div>
+      </section>
+
+      <section class="slide-wrap">
+        <article class="slide dark">
+          <div class="slide-inner">
+            <div class="brand-row">
+              <img class="brand-logo" src="../../../public/images/brand/LoanFactory_Logo_Name_orangeblack.png" alt="Loan Factory" />
+              <span class="kicker">Why now</span>
+            </div>
+            <h2 class="headline medium metal">Why paid coaching matters</h2>
+            <div class="grid three" style="margin-top: 36px">
+              <div class="card"><h3>Structure</h3><p>Members get a clearer weekly plan and a place to come back to.</p></div>
+              <div class="card"><h3>Accountability</h3><p>Calls, trackers, scorecards, and leaderboards keep the work visible.</p></div>
+              <div class="card"><h3>Execution</h3><p>Coaching turns scripts, recordings, and resources into weekly action.</p></div>
+            </div>
+            <p class="big-statement">The paid coaching platform gives loan officers a rhythm they can actually follow.</p>
+          </div>
+        </article>
+        <div class="notes"><strong>Presenter note:</strong> Anchor this in the site language: clear weekly plan, accountability, follow-up, and practical help from coaches.</div>
+      </section>
+
+      <section class="slide-wrap">
+        <article class="slide light">
+          <div class="slide-inner">
+            <div class="brand-row">
+              <img class="brand-logo" src="../../../public/images/brand/LoanFactory_Logo_Name_orangeblack.png" alt="Loan Factory" />
+              <span class="kicker">Problem</span>
+            </div>
+            <h2 class="headline medium metal-dark">The problem this solves</h2>
+            <div class="grid split" style="margin-top: 36px">
+              <div class="card">
+                <h3>Loan officers have tools.</h3>
+                <p style="margin-top: 14px">But many still need coaching, structure, accountability, and business guidance to turn those tools into consistent action.</p>
+              </div>
+              <div class="card">
+                <h3>The paid coaching section answers that gap.</h3>
+                <ul class="list">
+                  <li>What should I focus on this week?</li>
+                  <li>Which resources should I use?</li>
+                  <li>How do I track my consistency?</li>
+                  <li>Where do I get coaching review and support?</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </article>
+        <div class="notes"><strong>Presenter note:</strong> This slide should make the business need plain without drifting into other platform areas.</div>
+      </section>
+
+      <section class="slide-wrap">
+        <article class="slide dark">
+          <div class="slide-inner">
+            <div class="brand-row">
+              <img class="brand-logo" src="../../../public/images/brand/LoanFactory_Logo_Name_orangeblack.png" alt="Loan Factory" />
+              <span class="kicker">Platform overview</span>
+            </div>
+            <h2 class="headline medium metal">Two paid coaching offers. One member experience.</h2>
+            <div class="grid two" style="margin-top: 34px">
+              <div class="card">
+                <h3>LO Mastery</h3>
+                <p style="margin-top: 12px">A simple coaching rhythm for loan officers who want consistency.</p>
+                <div class="price">$249 <span>per month</span></div>
+              </div>
+              <div class="card">
+                <h3>Loan Factory Alliance</h3>
+                <p style="margin-top: 12px">More coaching touchpoints for LOs who want deeper accountability.</p>
+                <div class="price">$449 <span>per month</span></div>
+              </div>
+            </div>
+            <div class="callout dark-card">
+              <p style="color: rgba(255, 255, 255, 0.9)">The site positions both offers around calls, accountability, trackers, scorecards, recordings, and practical coaching resources.</p>
+            </div>
+          </div>
+        </article>
+        <div class="notes"><strong>Presenter note:</strong> The paid coaching platform is not a content library alone. It is a member rhythm with resources attached.</div>
+      </section>
+
+      <section class="slide-wrap">
+        <article class="slide light">
+          <div class="slide-inner">
+            <div class="brand-row">
+              <img class="brand-logo" src="../../../public/images/brand/LoanFactory_Logo_Name_orangeblack.png" alt="Loan Factory" />
+              <span class="kicker">Level I</span>
+            </div>
+            <h2 class="headline medium metal-dark">LO Mastery overview</h2>
+            <div class="grid split" style="margin-top: 34px">
+              <div class="card">
+                <h3>Loan Factory LO Mastery Coaching</h3>
+                <p style="margin-top: 12px">LO Mastery is paid coaching for loan officers who want a simple weekly plan, accountability, scorecards, scripts, recordings, and coaching resources.</p>
+                <div class="price">$249 <span>per month</span></div>
+              </div>
+              <div class="card">
+                <h3>What the site says members get</h3>
+                <ul class="list">
+                  <li>Biweekly group coaching calls</li>
+                  <li>Daily Power Hour Smile and Dial lunch-themed call</li>
+                  <li>Daily motivational coaching email</li>
+                  <li>Certified Mortgage Advisor designation</li>
+                  <li>Member area access</li>
+                  <li>Past training recordings</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </article>
+        <div class="notes"><strong>Presenter note:</strong> This slide uses direct site copy from the LO Mastery page and shared coaching data.</div>
+      </section>
+
+      <section class="slide-wrap">
+        <article class="slide light">
+          <div class="slide-inner">
+            <div class="brand-row">
+              <img class="brand-logo" src="../../../public/images/brand/LoanFactory_Logo_Name_orangeblack.png" alt="Loan Factory" />
+              <span class="kicker">LO Mastery value</span>
+            </div>
+            <h2 class="headline medium metal-dark">Who LO Mastery is for</h2>
+            <div class="grid two" style="margin-top: 34px">
+              <div class="card">
+                <h3>Best for</h3>
+                <p style="margin-top: 12px">Loan officers who want structure, coaching rhythm, accountability, and a clear member resource area.</p>
+              </div>
+              <div class="card">
+                <h3>Member value</h3>
+                <ul class="list">
+                  <li>Scripts, documents, and PDF handouts</li>
+                  <li>Greatness Tracker, Deal Flow Tracker, and Referral Partner Tracker</li>
+                  <li>Advisor Scorecard</li>
+                  <li>LO Mastery leaderboard</li>
+                  <li>Favorite YouTube channel library</li>
+                </ul>
+              </div>
+            </div>
+            <div class="callout"><p>Use LO Mastery when the member needs coaching structure, not another catalog.</p></div>
+          </div>
+        </article>
+        <div class="notes"><strong>Presenter note:</strong> Keep the value proposition centered on structure and weekly execution.</div>
+      </section>
+
+      <section class="slide-wrap">
+        <article class="slide dark">
+          <div class="slide-inner">
+            <div class="brand-row">
+              <img class="brand-logo" src="../../../public/images/brand/LoanFactory_Logo_Name_orangeblack.png" alt="Loan Factory" />
+              <span class="kicker">Level II</span>
+            </div>
+            <h2 class="headline medium metal">Loan Factory Alliance overview</h2>
+            <div class="grid split" style="margin-top: 34px">
+              <div class="card">
+                <h3>Loan Factory Alliance</h3>
+                <p style="margin-top: 12px">Loan Factory Alliance is the advanced paid coaching program for LOs who want more frequent coaching, stronger accountability, and deeper member access.</p>
+                <div class="price">$449 <span>per month</span></div>
+              </div>
+              <div class="card">
+                <h3>What Alliance adds</h3>
+                <ul class="list">
+                  <li>Everything in LO Mastery</li>
+                  <li>Weekly coaching calls</li>
+                  <li>Daily Breakfast Club call</li>
+                  <li>More specific daily coaching email</li>
+                  <li>Advanced certifications</li>
+                  <li>Priority accountability</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </article>
+        <div class="notes"><strong>Presenter note:</strong> This slide uses direct site copy from the Alliance page and shared coaching data.</div>
+      </section>
+
+      <section class="slide-wrap">
+        <article class="slide light">
+          <div class="slide-inner">
+            <div class="brand-row">
+              <img class="brand-logo" src="../../../public/images/brand/LoanFactory_Logo_Name_orangeblack.png" alt="Loan Factory" />
+              <span class="kicker">Alliance value</span>
+            </div>
+            <h2 class="headline medium metal-dark">Who Alliance is for</h2>
+            <div class="grid two" style="margin-top: 34px">
+              <div class="card">
+                <h3>Best for</h3>
+                <p style="margin-top: 12px">Loan officers who want a tighter coaching cadence, stronger accountability, and advanced specialty-track development.</p>
+              </div>
+              <div class="card">
+                <h3>Advanced member value</h3>
+                <ul class="list">
+                  <li>Military Housing Specialist</li>
+                  <li>Investor Specialist</li>
+                  <li>Approved specialty tracks</li>
+                  <li>Loan Factory Alliance leaderboard</li>
+                  <li>Advanced group coaching access</li>
+                  <li>Deeper coaching rhythm</li>
+                </ul>
+              </div>
+            </div>
+            <div class="callout"><p>Alliance is positioned as more frequent coaching and stronger accountability, not simply more content.</p></div>
+          </div>
+        </article>
+        <div class="notes"><strong>Presenter note:</strong> The decision for leadership is how tightly to define the Alliance member experience before launch.</div>
+      </section>
+
+      <section class="slide-wrap">
+        <article class="slide light">
+          <div class="slide-inner">
+            <div class="brand-row">
+              <img class="brand-logo" src="../../../public/images/brand/LoanFactory_Logo_Name_orangeblack.png" alt="Loan Factory" />
+              <span class="kicker">Comparison</span>
+            </div>
+            <h2 class="headline medium metal-dark">Side by side comparison</h2>
+            <table class="comparison" style="margin-top: 26px">
+              <thead>
+                <tr>
+                  <th>Area</th>
+                  <th>LO Mastery</th>
+                  <th>Loan Factory Alliance</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>Price</td><td>$249 per month</td><td>$449 per month</td></tr>
+                <tr><td>Positioning</td><td>A simple coaching rhythm for loan officers who want consistency.</td><td>More coaching touchpoints for LOs who want deeper accountability.</td></tr>
+                <tr><td>Calls</td><td>Biweekly group coaching calls and daily Power Hour Smile and Dial lunch-themed call.</td><td>Everything in LO Mastery plus weekly coaching calls and Daily Breakfast Club call.</td></tr>
+                <tr><td>Resources</td><td>Member area, recordings, scripts, documents, PDF handouts, trackers, scorecards, and favorite YouTube channel library.</td><td>Everything in LO Mastery plus advanced group coaching access.</td></tr>
+                <tr><td>Recognition</td><td>Certified Mortgage Advisor designation and LO Mastery leaderboard.</td><td>Advanced certifications, specialty tracks, priority accountability, and Alliance leaderboard.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </article>
+        <div class="notes"><strong>Presenter note:</strong> Every cell here comes from the current paid coaching section or shared paid coaching data.</div>
+      </section>
+
+      <section class="slide-wrap">
+        <article class="slide dark">
+          <div class="slide-inner">
+            <div class="brand-row">
+              <img class="brand-logo" src="../../../public/images/brand/LoanFactory_Logo_Name_orangeblack.png" alt="Loan Factory" />
+              <span class="kicker">Coaching rhythm</span>
+            </div>
+            <h2 class="headline medium metal">The confirmed rhythm</h2>
+            <div class="grid two" style="margin-top: 34px">
+              <div class="card">
+                <h3>LO Mastery</h3>
+                <ul class="list">
+                  <li>Biweekly group coaching calls</li>
+                  <li>Daily Power Hour Smile and Dial lunch-themed call</li>
+                  <li>Daily motivational coaching email</li>
+                </ul>
+              </div>
+              <div class="card">
+                <h3>Loan Factory Alliance</h3>
+                <ul class="list">
+                  <li>Weekly coaching calls</li>
+                  <li>Daily Breakfast Club call</li>
+                  <li>More specific daily coaching email</li>
+                  <li>Priority accountability rhythm</li>
+                </ul>
+              </div>
+            </div>
+            <p class="subhead">The coaching calendar page says exact dates and times are confirmed through the coaching communication channel.</p>
+          </div>
+        </article>
+        <div class="notes"><strong>Presenter note:</strong> Ask Edward to confirm call ownership, day/time, and communication channel.</div>
+      </section>
+
+      <section class="slide-wrap">
+        <article class="slide light">
+          <div class="slide-inner">
+            <div class="brand-row">
+              <img class="brand-logo" src="../../../public/images/brand/LoanFactory_Logo_Name_orangeblack.png" alt="Loan Factory" />
+              <span class="kicker">Member experience</span>
+            </div>
+            <h2 class="headline medium metal-dark">What paid members can open</h2>
+            <div class="grid three" style="margin-top: 34px">
+              <div class="card"><h3>Resources</h3><p>Recordings, scripts, handouts, documents, coaching references, and favorite training references.</p></div>
+              <div class="card"><h3>Trackers</h3><p>Advisor Scorecard, Greatness Tracker, Deal Flow Tracker, and Referral Partner Tracker.</p></div>
+              <div class="card"><h3>Recognition</h3><p>Certifications, LO Mastery leaderboard, Loan Factory Alliance leaderboard, and activity categories.</p></div>
+            </div>
+            <div class="callout"><p>The member area is the paid coaching home for resources, recordings, scripts, trackers, scorecards, certifications, and leaderboards.</p></div>
+          </div>
+        </article>
+        <div class="notes"><strong>Presenter note:</strong> This is the experience slide. It should help leadership see what a member is buying access to.</div>
+      </section>
+
+      <section class="slide-wrap">
+        <article class="slide dark">
+          <div class="slide-inner">
+            <div class="brand-row">
+              <img class="brand-logo" src="../../../public/images/brand/LoanFactory_Logo_Name_orangeblack.png" alt="Loan Factory" />
+              <span class="kicker">Business outcome</span>
+            </div>
+            <h2 class="headline medium metal">Paid coaching turns tools into production habits.</h2>
+            <div class="grid three" style="margin-top: 34px">
+              <div class="card"><h3>More consistency</h3><p>Members see the weekly work and track whether it gets done.</p></div>
+              <div class="card"><h3>More confidence</h3><p>Members have scripts, documents, recordings, and coaching review to lean on.</p></div>
+              <div class="card"><h3>More accountability</h3><p>Scorecards and leaderboards make effort, activity, and progress visible.</p></div>
+            </div>
+            <p class="subhead">The site frames leaderboards as motivation and accountability. Results vary by LO, market, and execution.</p>
+          </div>
+        </article>
+        <div class="notes"><strong>Presenter note:</strong> Keep this outcome-focused without making guarantees. The existing site already uses accountability language.</div>
+      </section>
+
+      <section class="slide-wrap">
+        <article class="slide light">
+          <div class="slide-inner">
+            <div class="brand-row">
+              <img class="brand-logo" src="../../../public/images/brand/LoanFactory_Logo_Name_orangeblack.png" alt="Loan Factory" />
+              <span class="kicker">TBD</span>
+            </div>
+            <h2 class="headline medium metal-dark">What needs to be finalized</h2>
+            <div class="grid two" style="margin-top: 34px">
+              <div class="card">
+                <h3>Offer readiness</h3>
+                <ul class="list">
+                  <li>Final pricing approval before public rollout</li>
+                  <li>Exact call dates and times</li>
+                  <li>Coaching communication channel</li>
+                  <li>Enrollment and launch timing</li>
+                </ul>
+              </div>
+              <div class="card">
+                <h3>Member delivery</h3>
+                <ul class="list">
+                  <li>Coach roles and call ownership</li>
+                  <li>Minimum launch-ready recordings, scripts, documents, and handouts</li>
+                  <li>Certification requirements and review process</li>
+                  <li>Leaderboard categories leadership wants active at launch</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </article>
+        <div class="notes"><strong>Presenter note:</strong> These are not invented features. They are items the site either labels as pending or implies need operating decisions.</div>
+      </section>
+
+      <section class="slide-wrap">
+        <article class="slide light">
+          <div class="slide-inner">
+            <div class="brand-row">
+              <img class="brand-logo" src="../../../public/images/brand/LoanFactory_Logo_Name_orangeblack.png" alt="Loan Factory" />
+              <span class="kicker">Leadership decisions</span>
+            </div>
+            <h2 class="headline medium metal-dark">Decisions needed from leadership</h2>
+            <div class="grid two" style="margin-top: 34px">
+              <div class="card">
+                <h3>Positioning and package</h3>
+                <ul class="list">
+                  <li>Confirm the Level I and Level II positioning.</li>
+                  <li>Confirm whether current pricing is approved for launch.</li>
+                  <li>Confirm which benefits are required on day one.</li>
+                </ul>
+              </div>
+              <div class="card">
+                <h3>Launch operation</h3>
+                <ul class="list">
+                  <li>Confirm launch timeline and enrollment path.</li>
+                  <li>Confirm coach responsibilities.</li>
+                  <li>Confirm member communication channel and calendar cadence.</li>
+                </ul>
+              </div>
+            </div>
+            <div class="callout"><p>The goal is a clean paid coaching offer that Edward and leadership can stand behind.</p></div>
+          </div>
+        </article>
+        <div class="notes"><strong>Presenter note:</strong> This is the ask slide. Keep the meeting focused on decisions that unlock launch readiness.</div>
+      </section>
+
+      <section class="slide-wrap">
+        <article class="slide dark">
+          <div class="slide-inner">
+            <div class="brand-row">
+              <img class="brand-logo" src="../../../public/images/brand/LoanFactory_Logo_Name_orangeblack.png" alt="Loan Factory" />
+              <div class="program-logos" aria-label="Paid coaching program logos">
+                <img src="../../../public/logos/lo-development/lo-mastery.png" alt="LO Mastery" />
+                <img src="../../../public/logos/lo-development/loan-factory-alliance.png" alt="Loan Factory Alliance" />
+              </div>
+            </div>
+            <p class="eyebrow">Closing</p>
+            <h2 class="headline metal">Paid coaching turns Loan Factory tools into production.</h2>
+            <p class="subhead">LO Mastery creates the first coaching rhythm. Loan Factory Alliance deepens the accountability for members who want more frequent support.</p>
+          </div>
+        </article>
+        <div class="notes"><strong>Presenter note:</strong> Close by returning to the simple paid coaching thesis: structure, accountability, member resources, and execution.</div>
+      </section>
+    </main>
+  </body>
+</html>
