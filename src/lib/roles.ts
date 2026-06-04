@@ -1,21 +1,19 @@
 export type RoleId =
-  | "admin"
-  | "corporate-coach"
-  | "team-leader"
-  | "marketing"
-  | "loan-officer"
-  | "support-staff";
+  | "master-admin"
+  | "coaching-manager"
+  | "coach"
+  | "lo-mastery-member"
+  | "alliance-member";
 
 export type Role = {
   id: RoleId;
   name: string;
   group:
-    | "Admin"
-    | "Corporate Coach"
-    | "Team Leader"
-    | "Marketing"
-    | "Loan Officer"
-    | "Support Staff";
+    | "Master Admin"
+    | "Coaching Manager"
+    | "Coach"
+    | "LO Mastery Member"
+    | "Loan Factory Alliance Member";
   description: string;
   dashboardHref: string;
   highlights: string[];
@@ -23,102 +21,87 @@ export type Role = {
 
 export const roles: Role[] = [
   {
-    id: "admin",
-    name: "Admin",
-    group: "Admin",
+    id: "master-admin",
+    name: "Master Admin",
+    group: "Master Admin",
     description:
-      "Platform overview for Jeremy, Andre, Tara, Benjamin, Edward, Kevin, and approved admin users.",
-    dashboardHref: "/resources/",
+      "Full local review view across public pages, member area, coach command center, manager dashboard, and admin.",
+    dashboardHref: "/admin/",
     highlights: [
-      "Platform overview",
-      "Content and admin links",
-      "Moderation and review concepts",
-      "User and support directory",
+      "All coaching pages",
+      "Role and user review",
+      "Program settings",
+      "Reporting visibility",
     ],
   },
   {
-    id: "corporate-coach",
-    name: "Corporate Coach",
-    group: "Corporate Coach",
+    id: "coaching-manager",
+    name: "Coaching Manager",
+    group: "Coaching Manager",
     description:
-      "Coaching resources, Apex coaching area, recordings, scripts, and trackers.",
-    dashboardHref: "/apex-member-area/",
+      "Manager view for coaches, members, program status, and executive reporting.",
+    dashboardHref: "/manager-dashboard/",
     highlights: [
-      "Apex coaching area",
-      "Recordings and scripts",
-      "Trackers and scorecards",
-      "Coach guide",
+      "Coach activity",
+      "Member progress",
+      "Program status",
+      "Reporting",
     ],
   },
   {
-    id: "team-leader",
-    name: "Team Leader",
-    group: "Team Leader",
+    id: "coach",
+    name: "Coach",
+    group: "Coach",
     description:
-      "Team growth, 1+1+1=5 planning, training progress, and resource sharing.",
-    dashboardHref: "/team-leader-guide/",
+      "Coach command center view for members, scorecards, trackers, notes, and community.",
+    dashboardHref: "/coach-command-center/",
     highlights: [
-      "Team Leader Guide",
-      "1+1+1=5 growth",
-      "Training progress",
-      "Resource sharing",
+      "Member roster",
+      "Scorecard review",
+      "Tracker review",
+      "Coach notes",
     ],
   },
   {
-    id: "marketing",
-    name: "Marketing",
-    group: "Marketing",
+    id: "lo-mastery-member",
+    name: "LO Mastery Member",
+    group: "LO Mastery Member",
     description:
-      "Review queue concepts, FaceGram content review, and approved adaptation resources.",
-    dashboardHref: "/facegram/",
+      "Member view for LO Mastery resources, weekly coaching, daily execution, and scorecards.",
+    dashboardHref: "/member-area/lo-mastery/",
     highlights: [
-      "FaceGram content review",
-      "Approved adaptation concepts",
-      "Compliance notes",
-      "Marketing resource paths",
+      "LO Mastery home",
+      "Scorecards",
+      "Trackers",
+      "Resources",
     ],
   },
   {
-    id: "loan-officer",
-    name: "Loan Officer",
-    group: "Loan Officer",
+    id: "alliance-member",
+    name: "Loan Factory Alliance Member",
+    group: "Loan Factory Alliance Member",
     description:
-      "Coaching, Sales & Marketing, AI Advantage, FaceGram, AI Assistants, and Resources.",
-    dashboardHref: "/",
+      "Member view for Alliance coaching, advanced planning, partner strategy, and accountability.",
+    dashboardHref: "/member-area/alliance/",
     highlights: [
-      "Sales & Marketing 101-601",
-      "LO Mastery Coaching",
-      "AI Advantage",
-      "FaceGram",
-    ],
-  },
-  {
-    id: "support-staff",
-    name: "Support Staff",
-    group: "Support Staff",
-    description:
-      "Support routing, resource directory, and request intake concepts.",
-    dashboardHref: "/support-routing/",
-    highlights: [
-      "Support routing",
-      "Resource directory",
-      "Platform suggestions",
-      "Anonymous feedback path",
+      "Alliance home",
+      "Weekly review",
+      "Partner strategy",
+      "Community",
     ],
   },
 ];
 
 const COACH_GUIDE_ACCESS: RoleId[] = [
-  "admin",
-  "corporate-coach",
-  "marketing",
+  "master-admin",
+  "coaching-manager",
+  "coach",
 ];
 
 const TEAM_LEADER_GUIDE_ACCESS: RoleId[] = [
-  "admin",
-  "corporate-coach",
-  "team-leader",
-  "marketing",
+  "master-admin",
+  "coaching-manager",
+  "coach",
 ];
 
 export type GatedSurface = "coach-guide" | "team-leader-guide";
@@ -145,4 +128,4 @@ export function isRoleId(value: string | null): value is RoleId {
 export const ROLE_STORAGE_KEY = "lf_role_preview";
 
 export const ROLE_PREVIEW_DISCLAIMER =
-  "This sign-in is a local role view for this browser. Real account security remains the production path.";
+  "This is a local review role for this browser. It does not change real users, roles, or production security.";

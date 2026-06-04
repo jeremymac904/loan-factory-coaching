@@ -21,14 +21,14 @@ export default async function HeaderAuthStatus({ variant = "desktop" }: Props) {
         }
       >
         <Link
-          href="/admin/"
+          href="/member-area/"
           className={
             variant === "mobile"
               ? "rounded-lg bg-white px-3 py-2 text-sm font-semibold text-lf-charcoal hover:text-lf-orange"
               : "inline-flex items-center justify-center whitespace-nowrap rounded-lg border border-lf-orange/30 bg-lf-orangeSoft px-3 py-2 text-sm font-semibold text-lf-orangeDark transition hover:border-lf-orange"
           }
         >
-          Internal Review
+          Review Mode
         </Link>
         <Link
           href="/auth/preview-exit/"
@@ -47,7 +47,7 @@ export default async function HeaderAuthStatus({ variant = "desktop" }: Props) {
   if (session.status !== "approved" && session.status !== "pending") {
     return (
       <Link
-        href="/login/"
+        href="/auth/google/?next=/member-area/"
         className={
           variant === "mobile"
             ? "rounded-lg bg-lf-navy px-3 py-3 text-center text-base font-semibold text-white hover:bg-lf-orange"
@@ -66,7 +66,9 @@ export default async function HeaderAuthStatus({ variant = "desktop" }: Props) {
   const destination =
     session.status === "approved" && session.profile.role === "admin"
       ? "/admin/"
-      : "/resources/";
+      : session.status === "approved" && session.profile.role === "corporate_coach"
+        ? "/coach-command-center/"
+        : "/member-area/";
 
   return (
     <div

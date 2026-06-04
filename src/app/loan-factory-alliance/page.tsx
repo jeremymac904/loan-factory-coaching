@@ -1,34 +1,33 @@
 import Link from "next/link";
 import PageHero from "@/components/PageHero";
-import SectionHeading from "@/components/SectionHeading";
-import { apexTiers } from "@/data/apex";
+import { programs } from "@/data/coachingPlatform";
 
 export const metadata = { title: "Loan Factory Alliance" };
 
-const alliance = apexTiers.find((tier) => tier.id === "pro")!;
+const program = programs[1];
 
 export default function LoanFactoryAlliancePage() {
   return (
     <>
       <PageHero
-        eyebrow="Level II coaching"
+        eyebrow="Loan Factory Alliance"
         title="Loan Factory Alliance"
         body={
           <p>
-            Loan Factory Alliance is the advanced paid coaching program for LOs
-            who want more frequent coaching, stronger accountability, and
-            deeper member access.
+            Alliance is the advanced paid coaching program for members who want
+            stronger weekly planning, partner strategy, pipeline review, and a
+            tighter accountability rhythm.
           </p>
         }
         backgroundImage="/media/dark-hero-background.png"
       >
-        <div className="flex flex-wrap gap-3">
-          <Link href="/member-area/" className="btn-primary">
-            Open Member Area
+        <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+          <Link href="/member-area/alliance/" className="btn-primary w-full sm:w-auto">
+            Open Alliance Area
           </Link>
           <Link
             href="/lo-mastery-coaching/"
-            className="btn-secondary border-white/30 bg-white/10 text-white hover:border-white hover:bg-white/20"
+            className="btn-secondary w-full border-white/30 bg-white/10 text-white hover:border-white hover:bg-white/20 sm:w-auto"
           >
             Compare LO Mastery
           </Link>
@@ -36,33 +35,25 @@ export default function LoanFactoryAlliancePage() {
       </PageHero>
 
       <section className="container-page py-14">
-        <SectionHeading
-          title="What Alliance adds"
-          description="Alliance includes LO Mastery plus a more advanced coaching rhythm and priority accountability."
-        />
-        <div className="mt-8 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-          {alliance.includes.slice(1, 7).map((item) => (
-            <article key={item} className="card">
-              <h2 className="h-display text-lg">{item}</h2>
-              <p className="prose-lf mt-2 text-sm text-lf-slate">
-                Designed for stronger weekly execution, accountability, and
-                advanced coaching review.
-              </p>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section className="bg-lf-mist">
-        <div className="container-page py-14">
-          <div className="card max-w-3xl">
-            <h2 className="h-display text-2xl">Pricing</h2>
-            <p className="mt-3 text-4xl font-semibold text-lf-navy">
-              $449<span className="ml-2 text-base font-medium text-lf-slate">per month</span>
+        <div className="grid gap-8 lg:grid-cols-[0.85fr_1.15fr]">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-wide text-lf-orange">
+              {program.price} per month
             </p>
-            <p className="prose-lf mt-3 text-sm text-lf-slate">
-              Pricing pending final approval before public rollout.
-            </p>
+            <h2 className="h-display mt-2 text-3xl">
+              Advanced coaching rhythm for stronger accountability.
+            </h2>
+            <p className="prose-lf mt-3 text-lf-slate">{program.bestFor}</p>
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2">
+            {program.includes.map((item) => (
+              <article key={item} className="card min-h-[130px]">
+                <h3 className="h-display text-lg">{item}</h3>
+                <p className="prose-lf mt-2 text-sm text-lf-slate">
+                  Designed for consistent review, planning, and follow-through.
+                </p>
+              </article>
+            ))}
           </div>
         </div>
       </section>

@@ -99,7 +99,7 @@ export default function LoginPicker() {
                   ))}
                 </ul>
                 <span className="mt-auto text-sm font-semibold text-lf-navy">
-                  {isActive ? "Go to role area" : "Sign in as this role"}
+                  {isActive ? "Go to role area" : "View as this role"}
                 </span>
               </button>
             );

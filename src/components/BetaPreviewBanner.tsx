@@ -13,8 +13,8 @@ export default async function BetaPreviewBanner() {
       <div className="mx-auto flex w-full max-w-[1500px] flex-col gap-2 px-5 py-2 text-sm sm:flex-row sm:items-center sm:justify-between sm:px-8">
         <p>
           <strong className="text-lf-navy">Internal review access:</strong>{" "}
-          pages are open for Jeremy's beta walkthrough without changing real
-          users, files, automations, or Loan Factory systems.
+          coaching pages are open for review without changing real users,
+          files, automations, or Loan Factory systems.
         </p>
         <Link href="/auth/preview-exit/" className="font-semibold text-lf-orangeDark">
           Exit review

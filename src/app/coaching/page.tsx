@@ -1,1 +1,1 @@
-export { default, metadata } from "../apex-advisor/page";
+export { default, metadata } from "../pricing/page";

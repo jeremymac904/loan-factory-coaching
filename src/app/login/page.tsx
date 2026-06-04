@@ -1,24 +1,38 @@
-import GoogleSignInButton from "@/components/GoogleSignInButton";
 import Link from "next/link";
+import LoginPicker from "@/components/LoginPicker";
 
 export const metadata = { title: "Sign In" };
 
-export default function LoginPage() {
+type SearchParams = Record<string, string | string[] | undefined>;
+
+type Props = {
+  searchParams?: Promise<SearchParams> | SearchParams;
+};
+
+export default async function LoginPage({ searchParams }: Props) {
+  const params = searchParams ? await searchParams : {};
+  const hasConfigError = params.error === "supabase-not-configured";
+
   return (
     <>
       <section className="relative isolate overflow-hidden bg-lf-navy text-white">
         <div
           aria-hidden
-          className="absolute inset-0 bg-cover bg-center opacity-40"
+          className="absolute inset-0 bg-cover bg-center"
           style={{ backgroundImage: "url(/media/dark-hero-background.png)" }}
         />
+        <div aria-hidden className="absolute inset-0 bg-black/72" />
         <div className="relative container-page py-14">
-          <h1 className="mt-5 font-display text-4xl font-semibold tracking-tight">
-            Sign in to LO Development
+          <p className="text-xs font-bold uppercase tracking-wide text-lf-orange">
+            Sign in
+          </p>
+          <h1 className="metal-title-dark mt-5 max-w-3xl text-4xl md:text-5xl">
+            Sign in to paid coaching.
           </h1>
           <p className="mt-4 max-w-2xl text-lg text-white/85">
-            Use your Loan Factory Google account to open your training,
-            coaching, FaceGram, resources, and AI help.
+            The public Sign In button goes directly to the Google auth action.
+            If local environment settings are missing, this page shows one
+            clean fallback message.
           </p>
         </div>
       </section>
@@ -26,48 +40,51 @@ export default function LoginPage() {
       <section className="container-page py-12">
         <div className="grid gap-6 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
           <div className="card">
-            <h2 className="h-display text-2xl">Sign in with Google</h2>
-            <p className="prose-lf mt-3 text-base">
-              Click the button below and choose your Loan Factory Google
-              account. If your email is approved, you will come back to the
-              site signed in.
+            <h2 className="h-display text-2xl">Google sign-in</h2>
+            <p className="prose-lf mt-3 text-base text-lf-slate">
+              Use Google sign-in for the real account flow when the environment
+              is configured.
             </p>
-            <div className="mt-6">
-              <GoogleSignInButton />
+            {hasConfigError && (
+              <p className="mt-5 rounded-lg border border-lf-orange/30 bg-lf-orangeSoft px-4 py-3 text-sm font-semibold text-lf-orangeDark">
+                Google sign-in is not configured for this local environment.
+                Use local review mode below to inspect the platform.
+              </p>
+            )}
+            <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+              <Link href="/auth/google/?next=/member-area/" className="btn-primary">
+                Sign in with Google
+              </Link>
+              <Link href="/auth/preview/?next=/member-area/" className="btn-secondary">
+                Local review only
+              </Link>
             </div>
           </div>
 
           <div className="card">
-            <h2 className="h-display text-xl">Who can get in?</h2>
-            <ul className="prose-lf mt-3 list-disc space-y-1 pl-5 text-base">
-              <li>Only loanfactory.com Google accounts are allowed.</li>
-              <li>Your email must be on the approved beta list.</li>
-              <li>If you are not approved yet, you will see Access Pending.</li>
-              <li>Ask Jeremy or LO Development if you need access.</li>
-            </ul>
-            <div className="mt-5 flex flex-wrap gap-3">
-              <Link href="/" className="btn-secondary">
-                Back to home
-              </Link>
-              <Link href="/auth/status/" className="btn-secondary">
-                Check sign-in status
-              </Link>
+            <h2 className="h-display text-xl">Local review roles</h2>
+            <p className="prose-lf mt-3 text-base text-lf-slate">
+              Local role selection lets the review team inspect pages without
+              changing real users, permissions, or data.
+            </p>
+            <div className="mt-5 grid gap-3 text-sm text-lf-charcoal">
+              {[
+                "Master Admin",
+                "Coaching Manager",
+                "Coach",
+                "LO Mastery Member",
+                "Loan Factory Alliance Member",
+              ].map((role) => (
+                <div key={role} className="rounded-lg bg-lf-mist p-3">
+                  {role}
+                </div>
+              ))}
             </div>
           </div>
         </div>
-
-        <div className="mt-6 rounded-2xl border border-lf-orange/30 bg-lf-orangeSoft p-6 shadow-card">
-          <h2 className="h-display text-xl">Internal review access</h2>
-          <p className="prose-lf mt-2 max-w-3xl text-sm text-lf-slate">
-            Use this only when Jeremy needs to review the site and Google sign
-            in is not ready. Internal review access opens the pages, but it is
-            not real production security and does not change real systems.
-          </p>
-          <Link href="/auth/preview/?next=/" className="btn-primary mt-5">
-            Enter Internal Review
-          </Link>
-        </div>
       </section>
+
+      <LoginPicker />
     </>
   );
 }

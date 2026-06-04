@@ -1,46 +1,44 @@
 import Link from "next/link";
-import SectionHeading from "@/components/SectionHeading";
+import { platformFeatures } from "@/data/coachingPlatform";
 
 export const metadata = { title: "Resources" };
 
 const resources = [
   {
-    title: "Recommended Channels",
-    description: "Find useful learning channels and trusted training references.",
-    href: "/recommended-channels/",
-  },
-  {
-    title: "Compliance Notes",
-    description: "Check language reminders before using anything with borrowers, Realtors, or the public.",
-    href: "/compliance/",
-  },
-  {
-    title: "Recordings",
-    description: "Watch class recordings, replays, and training video references.",
-    href: "/recordings/",
-  },
-  {
-    title: "LO Development Support Team",
-    description: "Find LO Development, corporate coach, and marketing review contacts.",
-    href: "/support-routing/#lo-development-support-team",
-  },
-  {
-    title: "Anonymous Complaints & Suggestions",
+    title: "Script books",
     description:
-      "Use Send Feedback for suggestions, broken links, complaints, and beta notes.",
-    href: "#feedback",
+      "First-call scripts, follow-up language, buyer conversation guides, and Realtor outreach scripts.",
+    href: "/member-area/resources/",
   },
   {
-    title: "Lender Escalation",
+    title: "Trackers",
     description:
-      "Request help with a lender issue and keep the details organized for review.",
-    href: "/lender-escalation/",
+      "Daily execution, Realtor relationships, deal flow, and follow-up trackers.",
+    href: "/member-area/trackers/",
   },
   {
-    title: "1+1+1=5 Team Growth",
+    title: "Scorecards",
     description:
-      "Plan community, persona, campaign, Realtor, recruiting, and scorecard lanes for Team Leaders.",
-    href: "/one-plus-one-five/",
+      "Weekly accountability views for coaching review and member follow-through.",
+    href: "/member-area/scorecards/",
+  },
+  {
+    title: "Theme days",
+    description:
+      "Simple weekly rhythm that gives every day a job and reduces guessing.",
+    href: "/member-area/classroom/",
+  },
+  {
+    title: "Classroom",
+    description:
+      "Lessons, replays, assignments, and practice prompts for coaching members.",
+    href: "/member-area/classroom/",
+  },
+  {
+    title: "Community",
+    description:
+      "Member wins, questions, prompts, and accountability conversation.",
+    href: "/member-area/community/",
   },
 ];
 
@@ -56,38 +54,37 @@ export default function ResourcesPage() {
         <div aria-hidden className="absolute inset-0 bg-black/72" />
         <div
           aria-hidden
-          className="absolute inset-0 bg-[radial-gradient(circle_at_18%_22%,rgba(242,106,31,0.28),transparent_30%),linear-gradient(90deg,rgba(0,0,0,0.92),rgba(17,17,17,0.64),rgba(0,0,0,0.9))]"
+          className="absolute inset-0 bg-[radial-gradient(circle_at_18%_22%,rgba(242,106,31,0.26),transparent_30%),linear-gradient(90deg,rgba(0,0,0,0.94),rgba(17,17,17,0.64),rgba(0,0,0,0.9))]"
         />
         <div className="relative container-page py-16 md:py-20">
-          <h1 className="metal-title-dark max-w-3xl text-4xl md:text-5xl">
+          <p className="text-xs font-bold uppercase tracking-wide text-lf-orange">
             Resources
+          </p>
+          <h1 className="metal-title-dark mt-5 max-w-4xl text-4xl md:text-5xl">
+            Coaching resources, organized for execution.
           </h1>
           <p className="mt-5 max-w-3xl text-lg leading-8 text-white/85">
-            Find training references, support contacts, compliance reminders,
-            recordings, feedback, and manual lender escalation.
+            Scripts, scorecards, trackers, theme days, classroom material, and
+            community links for the paid coaching platform.
           </p>
-          <div className="mt-8 flex flex-wrap gap-3">
-            <Link href="/support-routing/#lo-development-support-team" className="btn-primary">
-              Find support team
+          <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+            <Link href="/member-area/resources/" className="btn-primary w-full sm:w-auto">
+              Open member resources
             </Link>
             <Link
-              href="/sales-training/"
-              className="btn-secondary border-white/30 bg-white/10 text-white hover:border-white hover:bg-white/20"
+              href="/member-area/"
+              className="btn-secondary w-full border-white/30 bg-white/10 text-white hover:border-white hover:bg-white/20 sm:w-auto"
             >
-              Sales &amp; Marketing
+              Open member area
             </Link>
           </div>
         </div>
       </section>
 
       <section className="container-page py-14">
-        <SectionHeading
-          title="What do you need help with?"
-          description="Pick the resource area that matches your question right now."
-        />
-        <div className="mt-8 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
           {resources.map((resource) => (
-            <Link key={resource.href} href={resource.href} className="card hover:shadow-lift">
+            <Link key={resource.href + resource.title} href={resource.href} className="card min-h-[190px] hover:shadow-lift">
               <h3 className="h-display text-lg">{resource.title}</h3>
               <p className="prose-lf mt-2 text-sm text-lf-slate">
                 {resource.description}
@@ -96,14 +93,20 @@ export default function ResourcesPage() {
           ))}
         </div>
       </section>
-      <section id="feedback" className="container-page pb-14">
-        <div className="rounded-2xl border border-lf-orange/30 bg-lf-orangeSoft p-6 shadow-card">
-          <h2 className="h-display text-2xl">Send Feedback</h2>
-          <p className="prose-lf mt-2 max-w-3xl text-sm text-lf-slate">
-            Use the floating Send Feedback button on any page. Signed-in users
-            can submit feedback. If saving is unavailable, the note stays in
-            this browser so you can copy it to LO Development.
-          </p>
+
+      <section className="bg-lf-mist">
+        <div className="container-page py-14">
+          <h2 className="h-display text-3xl">Core coaching tools</h2>
+          <div className="mt-8 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+            {platformFeatures.map((feature) => (
+              <article key={feature.title} className="card min-h-[180px]">
+                <h3 className="h-display text-lg">{feature.title}</h3>
+                <p className="prose-lf mt-2 text-sm text-lf-slate">
+                  {feature.body}
+                </p>
+              </article>
+            ))}
+          </div>
         </div>
       </section>
     </>

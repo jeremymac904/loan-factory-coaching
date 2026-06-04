@@ -1,34 +1,33 @@
 import Link from "next/link";
 import PageHero from "@/components/PageHero";
-import SectionHeading from "@/components/SectionHeading";
-import { apexTiers } from "@/data/apex";
+import { programs } from "@/data/coachingPlatform";
 
 export const metadata = { title: "LO Mastery Coaching" };
 
-const loMastery = apexTiers.find((tier) => tier.id === "advisor")!;
+const program = programs[0];
 
 export default function LoMasteryCoachingPage() {
   return (
     <>
       <PageHero
-        eyebrow="Level I coaching"
+        eyebrow="LO Mastery"
         title="Loan Factory LO Mastery Coaching"
         body={
           <p>
-            LO Mastery is paid coaching for loan officers who want a simple
-            weekly plan, accountability, scorecards, scripts, recordings, and
-            coaching resources.
+            LO Mastery is paid coaching for loan officers who need structure,
+            daily schedule discipline, follow-up rhythm, scripts, trackers,
+            scorecards, and weekly accountability.
           </p>
         }
         backgroundImage="/media/dark-hero-background.png"
       >
-        <div className="flex flex-wrap gap-3">
-          <Link href="/member-area/" className="btn-primary">
-            Open Member Area
+        <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+          <Link href="/member-area/lo-mastery/" className="btn-primary w-full sm:w-auto">
+            Open LO Mastery Area
           </Link>
           <Link
             href="/loan-factory-alliance/"
-            className="btn-secondary border-white/30 bg-white/10 text-white hover:border-white hover:bg-white/20"
+            className="btn-secondary w-full border-white/30 bg-white/10 text-white hover:border-white hover:bg-white/20 sm:w-auto"
           >
             Compare Alliance
           </Link>
@@ -36,33 +35,25 @@ export default function LoMasteryCoachingPage() {
       </PageHero>
 
       <section className="container-page py-14">
-        <SectionHeading
-          title="What members get"
-          description="Use LO Mastery when you need coaching structure, not another training catalog."
-        />
-        <div className="mt-8 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-          {loMastery.includes.slice(0, 6).map((item) => (
-            <article key={item} className="card">
-              <h2 className="h-display text-lg">{item}</h2>
-              <p className="prose-lf mt-2 text-sm text-lf-slate">
-                Built for weekly action, coaching review, and stronger follow
-                through.
-              </p>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section className="bg-lf-mist">
-        <div className="container-page py-14">
-          <div className="card max-w-3xl">
-            <h2 className="h-display text-2xl">Pricing</h2>
-            <p className="mt-3 text-4xl font-semibold text-lf-navy">
-              $249<span className="ml-2 text-base font-medium text-lf-slate">per month</span>
+        <div className="grid gap-8 lg:grid-cols-[0.85fr_1.15fr]">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-wide text-lf-orange">
+              {program.price} per month
             </p>
-            <p className="prose-lf mt-3 text-sm text-lf-slate">
-              Pricing pending final approval before public rollout.
-            </p>
+            <h2 className="h-display mt-2 text-3xl">
+              A simple coaching rhythm for better weekly execution.
+            </h2>
+            <p className="prose-lf mt-3 text-lf-slate">{program.bestFor}</p>
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2">
+            {program.includes.map((item) => (
+              <article key={item} className="card min-h-[130px]">
+                <h3 className="h-display text-lg">{item}</h3>
+                <p className="prose-lf mt-2 text-sm text-lf-slate">
+                  Built to support consistent action between coaching calls.
+                </p>
+              </article>
+            ))}
           </div>
         </div>
       </section>

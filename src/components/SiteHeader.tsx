@@ -5,11 +5,10 @@ import { brandAssets } from "@/data/brandAssets";
 
 const primaryNav = [
   { label: "Home", href: "/" },
-  { label: "Coaching", href: "/coaching/" },
-  { label: "Sales & Marketing", href: "/sales-training/" },
-  { label: "AI Advantage", href: "/ai-training/" },
-  { label: "FaceGram", href: "/facegram/" },
-  { label: "AI Assistants", href: "/ai-assistants/" },
+  { label: "LO Mastery", href: "/lo-mastery-coaching/" },
+  { label: "Alliance", href: "/loan-factory-alliance/" },
+  { label: "Pricing", href: "/pricing/" },
+  { label: "Member Area", href: "/member-area/" },
   { label: "Resources", href: "/resources/" },
 ];
 
@@ -21,7 +20,7 @@ export default function SiteHeader() {
           <Link
             href="/"
             className="flex min-w-0 items-center"
-            aria-label="Loan Factory LO Development home"
+            aria-label="Loan Factory paid coaching home"
           >
             <BrandImage
               asset={brandAssets["loan-factory"]}
