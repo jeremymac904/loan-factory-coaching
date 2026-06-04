@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import BetaPreviewBanner from "@/components/BetaPreviewBanner";
-import HeyGenVideoWidget from "@/components/HeyGenVideoWidget";
 import SuggestionModal from "@/components/SuggestionModal";
 import "./globals.css";
 
@@ -38,7 +37,6 @@ export default function RootLayout({
         <BetaPreviewBanner />
         <main>{children}</main>
         <SiteFooter />
-        <HeyGenVideoWidget />
         <SuggestionModal
           triggerLabel="Send Feedback"
           triggerClassName="fixed bottom-3 right-3 z-40 max-w-[calc(100vw-1.5rem)] rounded-full bg-lf-orange px-3 py-2 text-xs font-bold text-white shadow-2xl transition hover:-translate-y-0.5 hover:bg-lf-orangeDark focus:outline-none focus:ring-2 focus:ring-lf-orange/30 sm:bottom-5 sm:right-5 sm:px-4 sm:py-3 sm:text-sm"

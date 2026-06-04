@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { RoutePageView } from "@/components/CoachingCards";
+import { ManagerSection } from "@/components/CoachingPlatformViews";
 import { getRoutePage, managerPages } from "@/data/coachingPlatform";
 
 type Props = {
@@ -20,5 +20,5 @@ export default async function ManagerSectionPage({ params }: Props) {
     notFound();
   }
 
-  return <RoutePageView page={page} />;
+  return <ManagerSection section={section} />;
 }

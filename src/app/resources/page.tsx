@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { platformFeatures } from "@/data/coachingPlatform";
+import { downloadResources, driveFolderUrl, platformFeatures } from "@/data/coachingPlatform";
 
 export const metadata = { title: "Resources" };
 
@@ -71,12 +71,14 @@ export default function ResourcesPage() {
             <Link href="/member-area/resources/" className="btn-primary w-full sm:w-auto">
               Open member resources
             </Link>
-            <Link
-              href="/member-area/"
+            <a
+              href={driveFolderUrl}
+              target="_blank"
+              rel="noreferrer"
               className="btn-secondary w-full border-white/30 bg-white/10 text-white hover:border-white hover:bg-white/20 sm:w-auto"
             >
-              Open member area
-            </Link>
+              Open Drive folder
+            </a>
           </div>
         </div>
       </section>
@@ -96,7 +98,45 @@ export default function ResourcesPage() {
 
       <section className="bg-lf-mist">
         <div className="container-page py-14">
-          <h2 className="h-display text-3xl">Core coaching tools</h2>
+          <p className="text-xs font-semibold uppercase tracking-wide text-lf-orange">
+            Download library
+          </p>
+          <h2 className="h-display mt-2 text-3xl">Drive-backed coaching assets</h2>
+          <div className="mt-8 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+            {downloadResources.map((resource) => (
+              <article key={resource.title} className="card flex min-h-[230px] flex-col">
+                <div className="flex flex-wrap gap-2">
+                  <span className="rounded-full bg-lf-orangeSoft px-2 py-1 text-xs font-bold text-lf-orange">
+                    {resource.category}
+                  </span>
+                  <span className="rounded-full bg-lf-mist px-2 py-1 text-xs font-bold text-lf-slate">
+                    {resource.audience}
+                  </span>
+                </div>
+                <h3 className="h-display mt-4 text-lg">{resource.title}</h3>
+                <p className="prose-lf mt-2 text-sm text-lf-slate">
+                  {resource.description}
+                </p>
+                <div className="mt-auto flex flex-wrap gap-2 pt-5">
+                  {resource.pdf && (
+                    <a href={resource.pdf} target="_blank" rel="noreferrer" className="btn-primary">
+                      Open PDF
+                    </a>
+                  )}
+                  {resource.docx && (
+                    <a href={resource.docx} target="_blank" rel="noreferrer" className="btn-secondary">
+                      Open DOCX
+                    </a>
+                  )}
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="container-page py-14">
+        <h2 className="h-display text-3xl">Core coaching tools</h2>
           <div className="mt-8 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
             {platformFeatures.map((feature) => (
               <article key={feature.title} className="card min-h-[180px]">
@@ -107,7 +147,6 @@ export default function ResourcesPage() {
               </article>
             ))}
           </div>
-        </div>
       </section>
     </>
   );
