@@ -3,7 +3,6 @@ import { NextResponse, type NextRequest } from "next/server";
 import { getSafeNextPath } from "@/lib/supabase/auth";
 import {
   getAuthCallbackUrl,
-  getSiteUrl,
   getSupabasePublicConfig,
   hasSupabasePublicConfig,
 } from "@/lib/supabase/config";
@@ -59,7 +58,7 @@ function redirectWithCookies(
   headersToSet: Record<string, string>,
 ) {
   return responseWithCookies(
-    NextResponse.redirect(new URL(path, getSiteUrl())),
+    NextResponse.redirect(new URL(path, request.nextUrl.origin)),
     cookiesToSet,
     headersToSet,
   );
