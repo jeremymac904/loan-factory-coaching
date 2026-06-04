@@ -523,25 +523,25 @@ export const themeDays = [
 ];
 
 export const scorecardMetrics: ScorecardMetric[] = [
-  { metric: "Power blocks honored", goal: 5, values: [1, 1, 1, 0, 1] },
-  { metric: "Calls / touches", goal: 50, values: [12, 8, 10, 7, 9] },
-  { metric: "Real conversations", goal: 20, values: [4, 3, 5, 2, 4] },
-  { metric: "Appointments set", goal: 5, values: [1, 1, 2, 0, 1] },
-  { metric: "Appointments held", goal: 3, values: [0, 1, 1, 0, 1] },
+  { metric: "Real conversations", goal: 20, values: [4, 3, 5, 3, 4] },
+  { metric: "Realtor conversations", goal: 10, values: [2, 1, 3, 2, 1] },
+  { metric: "Past client touches", goal: 25, values: [5, 6, 4, 5, 3] },
+  { metric: "Referrals requested", goal: 5, values: [1, 0, 1, 1, 1] },
   { metric: "Applications taken", goal: 3, values: [1, 0, 1, 0, 1] },
-  { metric: "Pre-approvals", goal: 2, values: [0, 1, 0, 0, 1] },
-  { metric: "Referrals / reviews asked", goal: 5, values: [1, 0, 1, 1, 1] },
+  { metric: "Pre approvals issued", goal: 2, values: [0, 1, 0, 0, 1] },
+  { metric: "Contracts received", goal: 1, values: [0, 0, 1, 0, 0] },
+  { metric: "Closings", goal: 1, values: [0, 0, 0, 0, 1] },
 ];
 
 export const allianceScorecardMetrics: ScorecardMetric[] = [
-  { metric: "Revenue blocks honored", goal: 5, values: [1, 1, 1, 1, 1] },
-  { metric: "Leverage blocks honored", goal: 5, values: [1, 0, 1, 1, 0] },
-  { metric: "A-tier agent touches", goal: 15, values: [3, 2, 4, 3, 2] },
-  { metric: "Strategic meetings", goal: 4, values: [1, 0, 1, 1, 0] },
-  { metric: "Applications", goal: 4, values: [1, 1, 0, 1, 1] },
-  { metric: "Content shipped", goal: 5, values: [1, 1, 1, 1, 1] },
-  { metric: "Systems improved", goal: 2, values: [0, 1, 0, 1, 0] },
-  { metric: "Reactivation touches", goal: 25, values: [5, 6, 4, 5, 3] },
+  { metric: "Real conversations", goal: 25, values: [5, 4, 6, 4, 5] },
+  { metric: "Realtor conversations", goal: 15, values: [3, 2, 4, 3, 2] },
+  { metric: "Past client touches", goal: 35, values: [7, 8, 6, 7, 6] },
+  { metric: "Referrals requested", goal: 8, values: [1, 2, 1, 2, 1] },
+  { metric: "Applications taken", goal: 4, values: [1, 1, 0, 1, 1] },
+  { metric: "Pre approvals issued", goal: 3, values: [1, 0, 1, 0, 1] },
+  { metric: "Contracts received", goal: 2, values: [0, 1, 0, 1, 0] },
+  { metric: "Closings", goal: 1, values: [0, 0, 0, 0, 1] },
 ];
 
 export const trackerDefinitions: TrackerDefinition[] = [
@@ -583,6 +583,19 @@ export const trackerDefinitions: TrackerDefinition[] = [
       ["Davis refi question", "Discovery", "Jeremy", "Review current goals", "Tomorrow", "Needs docs", "Medium"],
       ["Lee buyer", "Consult booked", "Jeremy", "Prep buyer questions", "Wednesday", "Payment range", "High"],
       ["Agent seminar lead", "Partner", "Jeremy", "Confirm agenda", "Friday", "Agent invite list", "Medium"],
+    ],
+  },
+  {
+    slug: "follow-up",
+    title: "Follow Up Tracker",
+    description:
+      "A working queue for quiet leads, pre-approved buyers, past clients, and partner promises that need a next action.",
+    columns: ["Contact", "Type", "Last touch", "Next message", "Due", "Owner", "Status"],
+    rows: [
+      ["A. Johnson", "Pre-approved buyer", "Home search check-in", "Offer support note", "Today", "Jeremy", "queued"],
+      ["M. Rivera", "Realtor partner", "Coffee meeting", "Send buyer seminar outline", "Tomorrow", "Jeremy", "active"],
+      ["D. Chen", "Past client", "Quarterly call", "Ask for introduction", "Friday", "Jeremy", "needs touch"],
+      ["Quiet lead list", "Warm leads", "No response", "Value-first re-engagement", "Thursday", "Jeremy", "batch"],
     ],
   },
   {
@@ -1149,7 +1162,7 @@ export const adminPages: Record<string, RoutePage> = {
   users: {
     eyebrow: "Admin",
     title: "Users",
-    description: "Admin review page for members, coaches, managers, and local role visibility.",
+    description: "Admin page for members, coaches, managers, and access visibility.",
     cards: [],
   },
   roles: {

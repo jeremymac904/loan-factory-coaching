@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type {
   CommunityPost,
   ScorecardMetric,
@@ -9,6 +9,49 @@ import type {
 
 const days = ["Mon", "Tue", "Wed", "Thu", "Fri"];
 
+type ScorecardStore = {
+  values?: Record<string, number[]>;
+  worked?: string;
+  stuck?: string;
+  focus?: string;
+};
+
+function readScorecardStore(storageKey: string) {
+  if (typeof window === "undefined") {
+    return null;
+  }
+
+  const saved = window.localStorage.getItem(storageKey);
+  if (!saved) {
+    return null;
+  }
+
+  try {
+    return JSON.parse(saved) as ScorecardStore;
+  } catch {
+    window.localStorage.removeItem(storageKey);
+    return null;
+  }
+}
+
+function readTrackerStore() {
+  if (typeof window === "undefined") {
+    return null;
+  }
+
+  const saved = window.localStorage.getItem("lf-tracker-workspace");
+  if (!saved) {
+    return null;
+  }
+
+  try {
+    return JSON.parse(saved) as Record<string, string[][]>;
+  } catch {
+    window.localStorage.removeItem("lf-tracker-workspace");
+    return null;
+  }
+}
+
 export function WeeklyScorecardForm({
   metrics,
   title = "Weekly Scorecard",
@@ -16,13 +59,44 @@ export function WeeklyScorecardForm({
   metrics: ScorecardMetric[];
   title?: string;
 }) {
-  const [values, setValues] = useState<Record<string, number[]>>(() =>
-    Object.fromEntries(metrics.map((metric) => [metric.metric, metric.values])),
+  const storageKey = `lf-scorecard-${title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`;
+  const defaultScorecardState = useMemo(
+    () => ({
+      values: Object.fromEntries(metrics.map((metric) => [metric.metric, metric.values])) as Record<string, number[]>,
+      worked: "Booked two Realtor conversations from the Wednesday list.",
+      stuck: "Follow-up slipped when appointments ran long.",
+      focus: "Finish every follow-up before opening reactive work.",
+      hydrated: false,
+    }),
+    [metrics],
   );
-  const [worked, setWorked] = useState("Protected the Power Block on the days it was scheduled.");
-  const [stuck, setStuck] = useState("Follow-up slipped when appointments ran long.");
-  const [focus, setFocus] = useState("Finish follow-up before opening reactive work.");
+  const [scorecardState, setScorecardState] = useState(defaultScorecardState);
   const [copyState, setCopyState] = useState("Copy review summary");
+  const { values, worked, stuck, focus, hydrated } = scorecardState;
+
+  useEffect(() => {
+    const saved = readScorecardStore(storageKey);
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- restore browser-only saved state after hydration to avoid SSR/client mismatches.
+    setScorecardState({
+      ...defaultScorecardState,
+      values: saved?.values ?? defaultScorecardState.values,
+      worked: saved?.worked ?? defaultScorecardState.worked,
+      stuck: saved?.stuck ?? defaultScorecardState.stuck,
+      focus: saved?.focus ?? defaultScorecardState.focus,
+      hydrated: true,
+    });
+  }, [defaultScorecardState, storageKey]);
+
+  useEffect(() => {
+    if (!hydrated) {
+      return;
+    }
+
+    window.localStorage.setItem(
+      storageKey,
+      JSON.stringify({ values, worked, stuck, focus }),
+    );
+  }, [focus, hydrated, storageKey, stuck, values, worked]);
 
   const totals = useMemo(
     () =>
@@ -41,10 +115,10 @@ export function WeeklyScorecardForm({
 
   function updateMetric(metric: string, dayIndex: number, nextValue: string) {
     const parsed = Number(nextValue);
-    setValues((current) => {
-      const row = [...(current[metric] ?? [0, 0, 0, 0, 0])];
+    setScorecardState((current) => {
+      const row = [...(current.values[metric] ?? [0, 0, 0, 0, 0])];
       row[dayIndex] = Number.isFinite(parsed) ? parsed : 0;
-      return { ...current, [metric]: row };
+      return { ...current, values: { ...current.values, [metric]: row } };
     });
   }
 
@@ -53,9 +127,9 @@ export function WeeklyScorecardForm({
       title,
       `Overall activity score: ${overall}%`,
       ...totals.map((metric) => `${metric.metric}: ${metric.total}/${metric.goal} (${metric.percent}%)`),
-      `Worked: ${worked}`,
-      `Stuck: ${stuck}`,
-      `Next focus: ${focus}`,
+      `Biggest win: ${worked}`,
+      `Biggest stuck point: ${stuck}`,
+      `Next week commitment: ${focus}`,
     ];
 
     if (navigator.clipboard) {
@@ -119,10 +193,8 @@ export function WeeklyScorecardForm({
                   </td>
                 ))}
                 <td className="px-3 py-3 font-bold text-lf-navy">{metric.total}</td>
-                <td className="px-3 py-3">
-                  <span className="rounded-full bg-lf-orangeSoft px-2 py-1 text-xs font-bold text-lf-orange">
-                    {metric.percent}%
-                  </span>
+                <td className="px-3 py-3 text-xs font-bold uppercase tracking-wide text-lf-orange">
+                  {metric.percent}%
                 </td>
               </tr>
             ))}
@@ -132,26 +204,29 @@ export function WeeklyScorecardForm({
 
       <div className="grid gap-4 border-t border-lf-line p-5 lg:grid-cols-3">
         <label className="grid gap-2 text-sm font-semibold text-lf-navy">
-          What worked this week
+          Biggest win
           <textarea
+            aria-label="Biggest win"
             value={worked}
-            onChange={(event) => setWorked(event.target.value)}
+            onChange={(event) => setScorecardState((current) => ({ ...current, worked: event.target.value }))}
             className="min-h-28 rounded-xl border border-lf-line p-3 text-sm font-normal text-lf-charcoal outline-none focus:border-lf-orange"
           />
         </label>
         <label className="grid gap-2 text-sm font-semibold text-lf-navy">
-          What did not work
+          Biggest stuck point
           <textarea
+            aria-label="Biggest stuck point"
             value={stuck}
-            onChange={(event) => setStuck(event.target.value)}
+            onChange={(event) => setScorecardState((current) => ({ ...current, stuck: event.target.value }))}
             className="min-h-28 rounded-xl border border-lf-line p-3 text-sm font-normal text-lf-charcoal outline-none focus:border-lf-orange"
           />
         </label>
         <label className="grid gap-2 text-sm font-semibold text-lf-navy">
-          Next week's focus
+          Next week commitment
           <textarea
+            aria-label="Next week commitment"
             value={focus}
-            onChange={(event) => setFocus(event.target.value)}
+            onChange={(event) => setScorecardState((current) => ({ ...current, focus: event.target.value }))}
             className="min-h-28 rounded-xl border border-lf-line p-3 text-sm font-normal text-lf-charcoal outline-none focus:border-lf-orange"
           />
         </label>
@@ -171,18 +246,43 @@ export function WeeklyScorecardForm({
 
 export function TrackerWorkspace({ trackers }: { trackers: TrackerDefinition[] }) {
   const [activeSlug, setActiveSlug] = useState(trackers[0]?.slug ?? "");
-  const [rowsByTracker, setRowsByTracker] = useState<Record<string, string[][]>>(() =>
-    Object.fromEntries(trackers.map((tracker) => [tracker.slug, tracker.rows])),
+  const defaultRowsByTracker = useMemo(
+    () => Object.fromEntries(trackers.map((tracker) => [tracker.slug, tracker.rows])) as Record<string, string[][]>,
+    [trackers],
   );
+  const [trackerState, setTrackerState] = useState({
+    rowsByTracker: defaultRowsByTracker,
+    hydrated: false,
+  });
   const [copyState, setCopyState] = useState("Copy tracker snapshot");
+  const { rowsByTracker, hydrated } = trackerState;
   const active = trackers.find((tracker) => tracker.slug === activeSlug) ?? trackers[0];
   const rows = rowsByTracker[active.slug] ?? [];
 
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- restore browser-only saved state after hydration to avoid SSR/client mismatches.
+    setTrackerState({
+      rowsByTracker: readTrackerStore() ?? defaultRowsByTracker,
+      hydrated: true,
+    });
+  }, [defaultRowsByTracker]);
+
+  useEffect(() => {
+    if (!hydrated) {
+      return;
+    }
+
+    window.localStorage.setItem("lf-tracker-workspace", JSON.stringify(rowsByTracker));
+  }, [hydrated, rowsByTracker]);
+
   function updateCell(rowIndex: number, columnIndex: number, value: string) {
-    setRowsByTracker((current) => {
-      const nextRows = (current[active.slug] ?? []).map((row) => [...row]);
+    setTrackerState((current) => {
+      const nextRows = (current.rowsByTracker[active.slug] ?? []).map((row) => [...row]);
       nextRows[rowIndex][columnIndex] = value;
-      return { ...current, [active.slug]: nextRows };
+      return {
+        ...current,
+        rowsByTracker: { ...current.rowsByTracker, [active.slug]: nextRows },
+      };
     });
   }
 
@@ -300,12 +400,12 @@ export function CommunityExperience({
 
     setLocalPosts((current) => [
       {
-        author: "Local Review Member",
+        author: "Member",
         role: "Member",
         category: activeCategory === "All" ? "Questions" : activeCategory,
         title: trimmed.split("\n")[0].slice(0, 80),
         body: trimmed,
-        comments: ["Local review discussion item."],
+        comments: ["Added from the browser composer."],
       },
       ...current,
     ]);
@@ -349,6 +449,7 @@ export function CommunityExperience({
           <label className="grid gap-3 text-sm font-semibold text-lf-navy">
             Share a win, question, script example, or stuck point
             <textarea
+              aria-label="Share a win, question, script example, or stuck point"
               value={composer}
               onChange={(event) => setComposer(event.target.value)}
               className="min-h-28 rounded-xl border border-lf-line p-3 text-sm font-normal text-lf-charcoal outline-none focus:border-lf-orange"
@@ -357,7 +458,7 @@ export function CommunityExperience({
           </label>
           <div className="mt-4 flex justify-end">
             <button type="button" onClick={addPost} className="btn-primary">
-              Add to local feed
+              Add to feed
             </button>
           </div>
         </div>
@@ -366,16 +467,9 @@ export function CommunityExperience({
           <article key={`${post.title}-${index}`} className="rounded-2xl border border-lf-line bg-white p-5 shadow-card">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
               <div>
-                <div className="flex flex-wrap items-center gap-2">
-                  <span className="rounded-full bg-lf-orangeSoft px-2 py-1 text-xs font-bold text-lf-orange">
-                    {post.category}
-                  </span>
-                  {post.pinned && (
-                    <span className="rounded-full bg-lf-navy px-2 py-1 text-xs font-bold text-white">
-                      Pinned
-                    </span>
-                  )}
-                </div>
+                <p className="text-xs font-bold uppercase tracking-wide text-lf-orange">
+                  {post.pinned ? "Pinned coach post" : post.category}
+                </p>
                 <h2 className="h-display mt-3 text-xl">{post.title}</h2>
                 <p className="mt-1 text-sm font-semibold text-lf-slate">
                   {post.author} · {post.role}
@@ -443,7 +537,7 @@ export function CoachNotesWorkspace({
     setLocalNotes((current) => [
       {
         member: selectedMember,
-        date: "Local review",
+        date: "Draft note",
         note,
         nextAction,
       },

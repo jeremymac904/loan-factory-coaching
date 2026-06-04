@@ -20,8 +20,8 @@ export default function ApplyPage() {
             Start with the right coaching path.
           </h1>
           <p className="mt-5 max-w-3xl text-lg leading-8 text-white/84">
-            Local review shows the intended application page layout. Final
-            intake wiring should connect only after the approved process is set.
+            Use this page to compare the paid coaching paths and choose the
+            right starting point for weekly execution support.
           </p>
         </div>
       </section>
@@ -44,11 +44,10 @@ export default function ApplyPage() {
             </div>
           </div>
           <div className="card">
-            <h2 className="h-display text-2xl">Local review only</h2>
+            <h2 className="h-display text-2xl">How to use this page</h2>
             <p className="prose-lf mt-3 text-lf-slate">
-              This build does not save application data or create fake backend
-              confirmations. Use the program pages and member area to review
-              the flow.
+              This page routes members to program comparison and the coaching
+              workspace. It does not create fake application confirmations.
             </p>
             <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
               <Link href="/pricing/" className="btn-primary">

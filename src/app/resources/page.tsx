@@ -105,15 +105,10 @@ export default function ResourcesPage() {
           <div className="mt-8 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
             {downloadResources.map((resource) => (
               <article key={resource.title} className="card flex min-h-[230px] flex-col">
-                <div className="flex flex-wrap gap-2">
-                  <span className="rounded-full bg-lf-orangeSoft px-2 py-1 text-xs font-bold text-lf-orange">
-                    {resource.category}
-                  </span>
-                  <span className="rounded-full bg-lf-mist px-2 py-1 text-xs font-bold text-lf-slate">
-                    {resource.audience}
-                  </span>
-                </div>
-                <h3 className="h-display mt-4 text-lg">{resource.title}</h3>
+                <p className="text-xs font-semibold uppercase tracking-wide text-lf-orange">
+                  {resource.category} / {resource.audience}
+                </p>
+                <h3 className="h-display mt-3 text-lg">{resource.title}</h3>
                 <p className="prose-lf mt-2 text-sm text-lf-slate">
                   {resource.description}
                 </p>

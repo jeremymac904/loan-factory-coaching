@@ -174,10 +174,8 @@ function ProgressTable() {
               <td className="break-words px-4 py-4 text-lf-charcoal">{row.focus}</td>
               <td className="break-words px-4 py-4 text-lf-slate">{row.scorecard}</td>
               <td className="break-words px-4 py-4 text-lf-charcoal">{row.nextAction}</td>
-              <td className="px-4 py-4">
-                <span className="rounded-full bg-lf-orangeSoft px-2 py-1 text-xs font-bold text-lf-orange">
-                  {row.status}
-                </span>
+              <td className="px-4 py-4 text-xs font-bold uppercase tracking-wide text-lf-orange">
+                {row.status}
               </td>
             </tr>
           ))}
@@ -196,9 +194,9 @@ function ProgramWeekGrid({ weeks }: { weeks: ProgramWeek[] }) {
             <p className="text-xs font-black uppercase tracking-wide text-lf-orange">
               Week {week.week}
             </p>
-            <span className="rounded-full bg-lf-mist px-2 py-1 text-xs font-bold text-lf-slate">
+            <p className="text-xs font-bold uppercase tracking-wide text-lf-slate">
               {week.phase}
-            </span>
+            </p>
           </div>
           <h3 className="h-display mt-3 text-xl">{week.theme}</h3>
           <p className="mt-2 text-sm font-semibold text-lf-slate">
@@ -223,15 +221,10 @@ function ProgramWeekGrid({ weeks }: { weeks: ProgramWeek[] }) {
 function ResourceCard({ resource }: { resource: DownloadResource }) {
   return (
     <article className="flex min-h-[230px] flex-col rounded-2xl border border-lf-line bg-white p-5 shadow-card">
-      <div className="flex flex-wrap items-center gap-2">
-        <span className="rounded-full bg-lf-orangeSoft px-2 py-1 text-xs font-bold text-lf-orange">
-          {resource.category}
-        </span>
-        <span className="rounded-full bg-lf-mist px-2 py-1 text-xs font-bold text-lf-slate">
-          {resource.audience}
-        </span>
-      </div>
-      <h3 className="h-display mt-4 text-xl">{resource.title}</h3>
+      <p className="text-xs font-semibold uppercase tracking-wide text-lf-orange">
+        {resource.category} / {resource.audience}
+      </p>
+      <h3 className="h-display mt-3 text-xl">{resource.title}</h3>
       <p className="prose-lf mt-2 text-sm text-lf-slate">{resource.description}</p>
       <div className="mt-auto flex flex-wrap gap-2 pt-5">
         {resource.pdf && (
@@ -263,7 +256,7 @@ export function MemberHome() {
         stats={["Power Block first", "Scorecard by Friday", "Bring one stuck point"]}
       />
       <MemberLayout>
-        <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_310px]">
+        <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_360px]">
           <main className="grid gap-5">
             <section className="rounded-2xl border border-lf-line bg-white p-5 shadow-card">
               <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
@@ -282,7 +275,21 @@ export function MemberHome() {
               </div>
             </section>
 
-            <div className="grid gap-5 md:grid-cols-2">
+            <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+              {[
+                ["Current Week", "Week 7: Realtor Partner Outreach", "/member-area/lo-mastery/"],
+                ["Scorecard Status", "4 of 5 work blocks logged. Finish Friday review.", "/member-area/scorecards/"],
+                ["Next Action", "Book two Realtor meetings from today's contact list.", "/member-area/trackers/"],
+                ["Coach Note", "Lead with curiosity on the first agent call.", "/coach-command-center/notes/"],
+              ].map(([title, body, href]) => (
+                <Link key={title} href={href} className="rounded-2xl border border-lf-line bg-white p-5 shadow-card transition hover:-translate-y-0.5 hover:shadow-lift">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-lf-orange">{title}</p>
+                  <p className="mt-3 text-sm font-semibold leading-6 text-lf-charcoal">{body}</p>
+                </Link>
+              ))}
+            </div>
+
+            <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
               {[
                 ["LO Mastery Dashboard", "Daily time blocking, scripts, and the 12-week execution path.", "/member-area/lo-mastery/"],
                 ["Alliance Dashboard", "Advanced planning, partner strategy, systems, and review rhythm.", "/member-area/alliance/"],
@@ -295,6 +302,24 @@ export function MemberHome() {
                   <span className="mt-5 inline-flex text-sm font-bold text-lf-orange">Open page</span>
                 </Link>
               ))}
+            </div>
+
+            <div className="grid gap-5 lg:grid-cols-3">
+              <Link href="/member-area/community/" className="rounded-2xl border border-lf-line bg-white p-5 shadow-card transition hover:-translate-y-0.5 hover:shadow-lift">
+                <p className="text-xs font-semibold uppercase tracking-wide text-lf-orange">Community preview</p>
+                <h3 className="h-display mt-2 text-xl">Pinned coach post and script practice thread</h3>
+                <p className="prose-lf mt-2 text-sm text-lf-slate">Open wins, questions, comments, and leaderboard preview.</p>
+              </Link>
+              <Link href="/member-area/classroom/" className="rounded-2xl border border-lf-line bg-white p-5 shadow-card transition hover:-translate-y-0.5 hover:shadow-lift">
+                <p className="text-xs font-semibold uppercase tracking-wide text-lf-orange">Classroom preview</p>
+                <h3 className="h-display mt-2 text-xl">Week 7 lesson: Realtor Partner Outreach</h3>
+                <p className="prose-lf mt-2 text-sm text-lf-slate">Review the lesson card, daily actions, scripts, and win condition.</p>
+              </Link>
+              <Link href="/member-area/resources/" className="rounded-2xl border border-lf-line bg-white p-5 shadow-card transition hover:-translate-y-0.5 hover:shadow-lift">
+                <p className="text-xs font-semibold uppercase tracking-wide text-lf-orange">Resource shortcuts</p>
+                <h3 className="h-display mt-2 text-xl">Script book, time blocker, scorecard</h3>
+                <p className="prose-lf mt-2 text-sm text-lf-slate">Open the Drive-backed resource library for the week.</p>
+              </Link>
             </div>
 
             <section>
@@ -314,8 +339,7 @@ export function MemberHome() {
               </p>
               <div className="mt-4 grid gap-3">
                 {["Build call list", "Run Power Block", "Update deal flow", "Log scorecard", "Prep tomorrow"].map((item) => (
-                  <div key={item} className="flex items-center gap-3 rounded-xl bg-lf-mist p-3">
-                    <span className="h-3 w-3 rounded-full bg-lf-orange" />
+                  <div key={item} className="border-l-4 border-lf-orange bg-lf-mist p-3">
                     <span className="text-sm font-semibold text-lf-charcoal">{item}</span>
                   </div>
                 ))}
@@ -375,6 +399,33 @@ function ProgramDashboard({ program }: { program: "mastery" | "alliance" }) {
   const focus = isMastery
     ? "Build the discipline: theme days, time blocks, scripts, scorecards, and coach review."
     : "Build the operating engine: systems, ratios, partner strategy, leadership, and advanced review.";
+  const dashboardLinks = isMastery
+    ? [
+        ["Daily Time Blocker", "Protect the daily Power Block and schedule the work before the day gets loud.", "/member-area/trackers/"],
+        ["Theme Days", "Run Monday through Friday with a clear job for each day.", "/member-area/calendar/"],
+        ["Greatness Tracker", "Track commitment, mindset, action, and follow-through.", "/member-area/trackers/"],
+        ["Weekly Scorecard", "Log real conversations, referrals, applications, contracts, and closings.", "/member-area/scorecards/"],
+        ["Script Book", "Open Realtor, borrower, follow-up, past client, and client-care scripts.", "/member-area/resources/"],
+        ["Coach Notes", "Preview current coach notes and next actions.", "/coach-command-center/notes/"],
+        ["Resource Downloads", "Open the Drive-backed program documents.", "/member-area/resources/"],
+        ["Classroom Lessons", "Review lesson cards and assignments by week.", "/member-area/classroom/"],
+        ["Community Feed", "Open wins, questions, script practice, and pinned coaching posts.", "/member-area/community/"],
+      ]
+    : [
+        ["Daily Time Blocker", "Keep revenue blocks and leverage blocks visible.", "/member-area/trackers/"],
+        ["Theme Days", "Run revenue rhythm plus leverage focus by weekday.", "/member-area/calendar/"],
+        ["Greatness Tracker", "Track leadership follow-through and personal execution.", "/member-area/trackers/"],
+        ["Weekly Scorecard", "Review conversations, applications, contracts, closings, and next commitments.", "/member-area/scorecards/"],
+        ["Advanced Business Planning", "Use the Alliance path to audit sources, ratios, systems, and bottlenecks.", "/member-area/classroom/"],
+        ["Realtor Partner Growth", "Tier agents and work A-tier value plans.", "/member-area/trackers/"],
+        ["Database Reactivation", "Segment past clients, partners, sphere, and dormant leads.", "/member-area/trackers/"],
+        ["Content Rhythm", "Batch content against the weekly business development plan.", "/member-area/classroom/"],
+        ["Production Systems", "Document lead, consult, application, and client-care workflows.", "/member-area/classroom/"],
+        ["Weekly Coaching Call Structure", "Bring scorecard, tracker, stuck point, and next action to review.", "/member-area/calendar/"],
+        ["Advanced Tracker", "Open relationship, follow-up, deal flow, and leverage trackers.", "/member-area/trackers/"],
+        ["Advanced Script Book", "Open partner, reactivation, DM, and delegation scripts.", "/member-area/resources/"],
+        ["Manager or Coach Review", "Review member progress, notes, and accountability state.", "/coach-command-center/"],
+      ];
 
   return (
     <>
@@ -414,6 +465,27 @@ function ProgramDashboard({ program }: { program: "mastery" | "alliance" }) {
               <p className="mt-4 rounded-xl bg-lf-orangeSoft p-3 text-sm font-semibold text-lf-orange">
                 Track: {weeks[0].number}
               </p>
+            </div>
+          </section>
+
+          <section>
+            <SectionTitle
+              label="Dashboard tools"
+              title={isMastery ? "LO Mastery operating tools" : "Alliance operating tools"}
+              description="Every card opens a real platform page or working tool."
+            />
+            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+              {dashboardLinks.map(([cardTitle, body, href]) => (
+                <Link
+                  key={cardTitle}
+                  href={href}
+                  className="rounded-2xl border border-lf-line bg-white p-5 shadow-card transition hover:-translate-y-0.5 hover:shadow-lift"
+                >
+                  <h3 className="h-display text-xl">{cardTitle}</h3>
+                  <p className="prose-lf mt-2 text-sm text-lf-slate">{body}</p>
+                  <p className="mt-4 text-sm font-bold text-lf-orange">Open tool</p>
+                </Link>
+              ))}
             </div>
           </section>
 
@@ -625,7 +697,7 @@ function ProfilePage() {
       <PageHero
         eyebrow="Member profile"
         title="Goals, focus, and accountability settings."
-        description="The profile view keeps member goals and weekly focus visible without turning the member homepage into a role selector."
+        description="The profile view keeps member goals, current focus, and coaching alignment visible."
         stats={["12-week goal", "Current focus", "Coach alignment"]}
       />
       <MemberLayout>
@@ -648,13 +720,13 @@ function ProfilePage() {
           </section>
           <aside className="rounded-2xl border border-lf-line bg-white p-6 shadow-card">
             <p className="text-xs font-semibold uppercase tracking-wide text-lf-orange">
-              Local review
+              Account access
             </p>
             <p className="prose-lf mt-3 text-sm text-lf-slate">
-              Local review access is controlled outside the member dashboard. Member pages stay focused on coaching work.
+              Member pages stay focused on coaching work. Sign-in uses the single Google authorization flow.
             </p>
-            <Link href="/login/" className="btn-secondary mt-5">
-              Review login options
+            <Link href="/auth/google/?next=/member-area/" className="btn-secondary mt-5">
+              Sign in with Google
             </Link>
           </aside>
         </div>
@@ -875,7 +947,7 @@ export function AdminHome() {
       <PageHero
         eyebrow="Admin"
         title="Platform administration."
-        description="Local review administration for users, roles, programs, resources, and settings without changing real systems."
+        description="Administration for users, roles, programs, resources, and settings across the paid coaching platform."
         actions={[
           { href: "/admin/users/", label: "Review users" },
           { href: "/admin/resources/", label: "Review resources", variant: "secondary" },
@@ -910,7 +982,7 @@ function AdminUsersTable() {
               <td className="px-4 py-4 text-lf-charcoal">{row.access}</td>
               <td className="px-4 py-4 text-lf-slate">{row.program}</td>
               <td className="px-4 py-4">
-                <span className="rounded-full bg-lf-orangeSoft px-2 py-1 text-xs font-bold text-lf-orange">
+                <span className="text-xs font-bold uppercase tracking-wide text-lf-orange">
                   {row.status}
                 </span>
               </td>
@@ -957,7 +1029,7 @@ export function AdminSection({ section }: { section: string }) {
         {section === "roles" && (
           <div className="grid gap-5 md:grid-cols-2">
             {[
-              ["Platform owner", "Full local review of all coaching surfaces."],
+              ["Platform owner", "Full visibility across all coaching surfaces."],
               ["Coaching manager", "Manager dashboard, reporting, program status, coach load, and member progress."],
               ["Coach", "Coach command center, assigned members, scorecards, trackers, notes, and community."],
               ["Member", "Program dashboard, resources, scorecards, trackers, community, classroom, calendar, and profile."],
@@ -980,7 +1052,7 @@ export function AdminSection({ section }: { section: string }) {
         {section === "settings" && (
           <div className="grid gap-5 md:grid-cols-2">
             {[
-              ["Local review mode", "All requested coaching routes are open locally without login."],
+              ["Review access", "Requested coaching routes remain available for internal review without changing real records."],
               ["Google sign-in", "Public sign-in uses the Google auth route when environment settings are available."],
               ["Visible language", "The platform stays focused on paid coaching, weekly execution, scorecards, trackers, scripts, and community."],
               ["Download source", "Resource buttons use the approved Drive folder and file-level links where available."],

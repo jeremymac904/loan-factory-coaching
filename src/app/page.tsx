@@ -86,7 +86,7 @@ export default async function HomePage({ searchParams }: Props) {
             />
             <div aria-hidden className="absolute inset-0 bg-[linear-gradient(160deg,rgba(0,0,0,0.94),rgba(0,0,0,0.72),rgba(242,106,31,0.20))]" />
             <div className="relative p-6">
-              <div className="mb-6 h-1 w-16 rounded-full bg-lf-orange" />
+              <div className="mb-6 h-1 w-16 bg-lf-orange" />
               <p className="text-xs font-semibold uppercase tracking-wide text-lf-orange">
                 Coaching operating system
               </p>
@@ -104,7 +104,7 @@ export default async function HomePage({ searchParams }: Props) {
                     key={item}
                     className="flex items-center gap-3 rounded-lg border border-white/10 bg-white/[0.07] p-3"
                   >
-                    <span className="h-2.5 w-2.5 rounded-full bg-lf-orange" />
+                    <span className="h-2.5 w-2.5 bg-lf-orange" />
                     <span className="text-sm font-semibold text-white/86">
                       {item}
                     </span>
@@ -166,8 +166,8 @@ export default async function HomePage({ searchParams }: Props) {
               A clean weekly operating rhythm.
             </h2>
             <p className="prose-lf mt-3 text-lf-slate">
-              Each block has a job. No random pill clusters, no invented
-              modules, and no empty sections.
+              Each block has a job. The layout stays clean, direct, and
+              built around the tools members actually use.
             </p>
           </div>
           <div className="mt-8 grid gap-5 md:grid-cols-2 lg:grid-cols-3">

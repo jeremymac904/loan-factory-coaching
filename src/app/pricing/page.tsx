@@ -49,7 +49,7 @@ export default function PricingPage() {
               <ul className="grid gap-2 text-sm text-lf-charcoal">
                 {program.includes.map((item) => (
                   <li key={item} className="flex gap-3 rounded-lg bg-lf-mist p-3">
-                    <span className="mt-1 h-2 w-2 rounded-full bg-lf-orange" />
+                    <span className="mt-1 h-2 w-2 bg-lf-orange" />
                     <span>{item}</span>
                   </li>
                 ))}

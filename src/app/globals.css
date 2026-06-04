@@ -26,7 +26,7 @@ a {
 
 @layer components {
   .container-page {
-    @apply mx-auto w-full max-w-6xl px-5 sm:px-8;
+    @apply mx-auto w-full max-w-[1400px] px-5 sm:px-8;
   }
 
   .h-display {
@@ -59,7 +59,7 @@ a {
   }
 
   .pill {
-    @apply inline-flex items-center gap-1 rounded-full border border-lf-line bg-white px-2.5 py-0.5 text-xs font-medium text-lf-slate;
+    @apply inline-flex items-center gap-1 rounded-lg border border-lf-line bg-white px-2.5 py-1 text-xs font-medium text-lf-slate;
   }
 
   .btn-primary {
