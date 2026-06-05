@@ -6,9 +6,7 @@ const footerLinks = [
   { href: "/", label: "Home" },
   { href: "/lo-mastery-coaching/", label: "LO Mastery" },
   { href: "/loan-factory-alliance/", label: "Loan Factory Alliance" },
-  { href: "/pricing/", label: "Pricing" },
   { href: "/member-area/", label: "Member Area" },
-  { href: "/resources/", label: "Resources" },
   { href: "/coach-command-center/", label: "Coach Command Center" },
   { href: "/manager-dashboard/", label: "Manager Dashboard" },
 ];

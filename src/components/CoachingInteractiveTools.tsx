@@ -3,7 +3,9 @@
 import { useEffect, useMemo, useState } from "react";
 import type {
   CommunityPost,
+  PlaybookResource,
   ScorecardMetric,
+  ScriptResource,
   TrackerDefinition,
 } from "@/data/coachingPlatform";
 
@@ -14,6 +16,8 @@ type ScorecardStore = {
   worked?: string;
   stuck?: string;
   focus?: string;
+  status?: string;
+  history?: string[];
 };
 
 function readScorecardStore(storageKey: string) {
@@ -55,9 +59,11 @@ function readTrackerStore() {
 export function WeeklyScorecardForm({
   metrics,
   title = "Weekly Scorecard",
+  programLabel = "LO Mastery",
 }: {
   metrics: ScorecardMetric[];
   title?: string;
+  programLabel?: string;
 }) {
   const storageKey = `lf-scorecard-${title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`;
   const defaultScorecardState = useMemo(
@@ -66,13 +72,15 @@ export function WeeklyScorecardForm({
       worked: "Booked two Realtor conversations from the Wednesday list.",
       stuck: "Follow-up slipped when appointments ran long.",
       focus: "Finish every follow-up before opening reactive work.",
+      status: "Draft not saved",
+      history: [] as string[],
       hydrated: false,
     }),
     [metrics],
   );
   const [scorecardState, setScorecardState] = useState(defaultScorecardState);
   const [copyState, setCopyState] = useState("Copy review summary");
-  const { values, worked, stuck, focus, hydrated } = scorecardState;
+  const { values, worked, stuck, focus, status, history, hydrated } = scorecardState;
 
   useEffect(() => {
     const saved = readScorecardStore(storageKey);
@@ -83,6 +91,8 @@ export function WeeklyScorecardForm({
       worked: saved?.worked ?? defaultScorecardState.worked,
       stuck: saved?.stuck ?? defaultScorecardState.stuck,
       focus: saved?.focus ?? defaultScorecardState.focus,
+      status: saved?.status ?? defaultScorecardState.status,
+      history: saved?.history ?? defaultScorecardState.history,
       hydrated: true,
     });
   }, [defaultScorecardState, storageKey]);
@@ -94,9 +104,9 @@ export function WeeklyScorecardForm({
 
     window.localStorage.setItem(
       storageKey,
-      JSON.stringify({ values, worked, stuck, focus }),
+      JSON.stringify({ values, worked, stuck, focus, status, history }),
     );
-  }, [focus, hydrated, storageKey, stuck, values, worked]);
+  }, [focus, history, hydrated, status, storageKey, stuck, values, worked]);
 
   const totals = useMemo(
     () =>
@@ -139,6 +149,24 @@ export function WeeklyScorecardForm({
     }
   }
 
+  function saveDraft() {
+    const stamp = new Date().toLocaleString();
+    setScorecardState((current) => ({
+      ...current,
+      status: `Draft saved ${stamp}`,
+      history: [`Draft saved ${stamp}`, ...current.history].slice(0, 5),
+    }));
+  }
+
+  function submitToCoach() {
+    const stamp = new Date().toLocaleString();
+    setScorecardState((current) => ({
+      ...current,
+      status: `Submitted to coach ${stamp}`,
+      history: [`Submitted to coach ${stamp}`, ...current.history].slice(0, 5),
+    }));
+  }
+
   return (
     <section className="rounded-2xl border border-lf-line bg-white shadow-card">
       <div className="grid gap-4 border-b border-lf-line p-5 lg:grid-cols-[minmax(0,1fr)_220px] lg:items-center">
@@ -148,10 +176,10 @@ export function WeeklyScorecardForm({
           </p>
           <h2 className="h-display mt-2 text-2xl">{title}</h2>
           <p className="prose-lf mt-2 text-sm text-lf-slate">
-            Fill daily, review weekly, and bring the numbers to coaching.
+            Fill daily, save the draft, and submit the weekly review to the coach.
           </p>
         </div>
-        <div className="rounded-xl bg-lf-navy p-4 text-white">
+        <div className="bg-lf-navy p-4 text-white">
           <p className="text-xs font-semibold uppercase tracking-wide text-lf-orange">
             Week pace
           </p>
@@ -232,13 +260,33 @@ export function WeeklyScorecardForm({
         </label>
       </div>
 
-      <div className="flex flex-col gap-3 border-t border-lf-line p-5 sm:flex-row sm:items-center sm:justify-between">
-        <p className="text-sm text-lf-slate">
-          Browser review tool. Use the copied summary in coaching notes or email.
-        </p>
-        <button type="button" onClick={copySummary} className="btn-primary">
-          {copyState}
-        </button>
+      <div className="grid gap-5 border-t border-lf-line p-5 lg:grid-cols-[minmax(0,1fr)_340px]">
+        <div>
+          <p className="text-sm font-semibold text-lf-navy">{programLabel} submission status</p>
+          <p className="mt-2 text-sm text-lf-slate">{status}</p>
+          <p className="mt-2 text-sm text-lf-slate">Coach review status: waiting for coach review after submission.</p>
+          {history.length > 0 && (
+            <div className="mt-4 border-l-2 border-lf-orange pl-4">
+              <p className="text-xs font-semibold uppercase tracking-wide text-lf-orange">Prior submissions</p>
+              <ul className="mt-2 grid gap-1 text-sm text-lf-slate">
+                {history.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
+        <div className="flex flex-col gap-3">
+          <button type="button" onClick={saveDraft} className="btn-secondary">
+            Save draft
+          </button>
+          <button type="button" onClick={submitToCoach} className="btn-primary">
+            Submit to coach
+          </button>
+          <button type="button" onClick={copySummary} className="btn-secondary">
+            {copyState}
+          </button>
+        </div>
       </div>
     </section>
   );
@@ -255,9 +303,13 @@ export function TrackerWorkspace({ trackers }: { trackers: TrackerDefinition[] }
     hydrated: false,
   });
   const [copyState, setCopyState] = useState("Copy tracker snapshot");
+  const [saveState, setSaveState] = useState("Autosaved locally");
   const { rowsByTracker, hydrated } = trackerState;
   const active = trackers.find((tracker) => tracker.slug === activeSlug) ?? trackers[0];
   const rows = rowsByTracker[active.slug] ?? [];
+  const filledCells = rows.flat().filter((cell) => cell.trim().length > 0).length;
+  const totalCells = Math.max(rows.flat().length, 1);
+  const readiness = Math.round((filledCells / totalCells) * 100);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- restore browser-only saved state after hydration to avoid SSR/client mismatches.
@@ -276,6 +328,7 @@ export function TrackerWorkspace({ trackers }: { trackers: TrackerDefinition[] }
   }, [hydrated, rowsByTracker]);
 
   function updateCell(rowIndex: number, columnIndex: number, value: string) {
+    setSaveState("Unsaved changes");
     setTrackerState((current) => {
       const nextRows = (current.rowsByTracker[active.slug] ?? []).map((row) => [...row]);
       nextRows[rowIndex][columnIndex] = value;
@@ -298,6 +351,12 @@ export function TrackerWorkspace({ trackers }: { trackers: TrackerDefinition[] }
       setCopyState("Copied");
       window.setTimeout(() => setCopyState("Copy tracker snapshot"), 1400);
     }
+  }
+
+  function saveTracker() {
+    const stamp = new Date().toLocaleString();
+    window.localStorage.setItem("lf-tracker-workspace", JSON.stringify(rowsByTracker));
+    setSaveState(`Saved ${stamp}`);
   }
 
   return (
@@ -338,9 +397,14 @@ export function TrackerWorkspace({ trackers }: { trackers: TrackerDefinition[] }
               <h3 className="h-display text-xl">{active.title}</h3>
               <p className="prose-lf mt-2 text-sm text-lf-slate">{active.description}</p>
             </div>
-            <button type="button" onClick={copyTracker} className="btn-secondary">
-              {copyState}
-            </button>
+            <div className="flex flex-col gap-2 sm:flex-row">
+              <button type="button" onClick={saveTracker} className="btn-primary">
+                Save tracker
+              </button>
+              <button type="button" onClick={copyTracker} className="btn-secondary">
+                {copyState}
+              </button>
+            </div>
           </div>
           <div className="overflow-x-auto rounded-xl border border-lf-line">
             <table className="w-full min-w-[840px] border-collapse text-left text-sm">
@@ -371,6 +435,20 @@ export function TrackerWorkspace({ trackers }: { trackers: TrackerDefinition[] }
               </tbody>
             </table>
           </div>
+          <div className="mt-5 grid gap-4 border-t border-lf-line pt-5 md:grid-cols-3">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wide text-lf-orange">Local save</p>
+              <p className="mt-2 text-sm font-semibold text-lf-charcoal">{saveState}</p>
+            </div>
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wide text-lf-orange">Summary</p>
+              <p className="mt-2 text-sm font-semibold text-lf-charcoal">{filledCells} of {totalCells} fields filled</p>
+            </div>
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wide text-lf-orange">Coach review readiness</p>
+              <p className="mt-2 text-sm font-semibold text-lf-charcoal">{readiness}% ready for review</p>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -388,6 +466,11 @@ export function CommunityExperience({
   const [activeCategory, setActiveCategory] = useState("All");
   const [localPosts, setLocalPosts] = useState(posts);
   const [composer, setComposer] = useState("");
+  const [composerCategory, setComposerCategory] = useState("Questions");
+  const [youtubeUrl, setYoutubeUrl] = useState("");
+  const [attachmentType, setAttachmentType] = useState("No attachment");
+  const [pollPrompt, setPollPrompt] = useState("");
+  const [draftState, setDraftState] = useState("Draft ready");
   const visiblePosts = localPosts.filter(
     (post) => activeCategory === "All" || post.category === activeCategory,
   );
@@ -402,14 +485,23 @@ export function CommunityExperience({
       {
         author: "Member",
         role: "Member",
-        category: activeCategory === "All" ? "Questions" : activeCategory,
+        category: composerCategory,
         title: trimmed.split("\n")[0].slice(0, 80),
-        body: trimmed,
+        body: [
+          trimmed,
+          youtubeUrl ? `YouTube link: ${youtubeUrl}` : "",
+          attachmentType !== "No attachment" ? `Attachment placeholder: ${attachmentType}` : "",
+          pollPrompt ? `Poll prompt: ${pollPrompt}` : "",
+        ].filter(Boolean).join("\n\n"),
         comments: ["Added from the browser composer."],
       },
       ...current,
     ]);
     setComposer("");
+    setYoutubeUrl("");
+    setPollPrompt("");
+    setAttachmentType("No attachment");
+    setDraftState("Posted locally");
   }
 
   return (
@@ -446,17 +538,81 @@ export function CommunityExperience({
 
       <main className="grid gap-5">
         <div className="rounded-2xl border border-lf-line bg-white p-5 shadow-card">
-          <label className="grid gap-3 text-sm font-semibold text-lf-navy">
-            Share a win, question, script example, or stuck point
-            <textarea
-              aria-label="Share a win, question, script example, or stuck point"
-              value={composer}
-              onChange={(event) => setComposer(event.target.value)}
-              className="min-h-28 rounded-xl border border-lf-line p-3 text-sm font-normal text-lf-charcoal outline-none focus:border-lf-orange"
-              placeholder="Write the coaching conversation you want help with..."
-            />
-          </label>
+          <div className="grid gap-4">
+            <label className="grid gap-2 text-sm font-semibold text-lf-navy">
+              Category
+              <select
+                value={composerCategory}
+                onChange={(event) => {
+                  setComposerCategory(event.target.value);
+                  setDraftState("Draft saved locally");
+                }}
+                className="h-11 rounded-lg border border-lf-line px-3 text-sm font-normal text-lf-charcoal outline-none focus:border-lf-orange"
+              >
+                {["Wins", "Questions", "Scripts"].map((category) => (
+                  <option key={category}>{category}</option>
+                ))}
+              </select>
+            </label>
+            <label className="grid gap-3 text-sm font-semibold text-lf-navy">
+              Share a win, question, script example, or stuck point
+              <textarea
+                aria-label="Share a win, question, script example, or stuck point"
+                value={composer}
+                onChange={(event) => {
+                  setComposer(event.target.value);
+                  setDraftState("Draft saved locally");
+                }}
+                className="min-h-28 rounded-xl border border-lf-line p-3 text-sm font-normal text-lf-charcoal outline-none focus:border-lf-orange"
+                placeholder="Write the coaching conversation you want help with..."
+              />
+            </label>
+            <div className="grid gap-3 md:grid-cols-3">
+              <label className="grid gap-2 text-sm font-semibold text-lf-navy">
+                YouTube link
+                <input
+                  aria-label="YouTube link"
+                  value={youtubeUrl}
+                  onChange={(event) => {
+                    setYoutubeUrl(event.target.value);
+                    setDraftState("Draft saved locally");
+                  }}
+                  className="h-11 rounded-lg border border-lf-line px-3 text-sm font-normal text-lf-charcoal outline-none focus:border-lf-orange"
+                  placeholder="Paste link"
+                />
+              </label>
+              <label className="grid gap-2 text-sm font-semibold text-lf-navy">
+                Media placeholder
+                <select
+                  value={attachmentType}
+                  onChange={(event) => {
+                    setAttachmentType(event.target.value);
+                    setDraftState("Draft saved locally");
+                  }}
+                  className="h-11 rounded-lg border border-lf-line px-3 text-sm font-normal text-lf-charcoal outline-none focus:border-lf-orange"
+                >
+                  {["No attachment", "Image placeholder", "Small video placeholder"].map((option) => (
+                    <option key={option}>{option}</option>
+                  ))}
+                </select>
+              </label>
+              <label className="grid gap-2 text-sm font-semibold text-lf-navy">
+                Poll prompt
+                <input
+                  aria-label="Poll prompt"
+                  value={pollPrompt}
+                  onChange={(event) => {
+                    setPollPrompt(event.target.value);
+                    setDraftState("Draft saved locally");
+                  }}
+                  className="h-11 rounded-lg border border-lf-line px-3 text-sm font-normal text-lf-charcoal outline-none focus:border-lf-orange"
+                  placeholder="Optional poll question"
+                />
+              </label>
+            </div>
+          </div>
           <div className="mt-4 flex justify-end">
+            <p className="mr-auto self-center text-sm font-semibold text-lf-slate">{draftState}</p>
             <button type="button" onClick={addPost} className="btn-primary">
               Add to feed
             </button>
@@ -517,6 +673,140 @@ export function CommunityExperience({
           </div>
         </div>
       </aside>
+    </section>
+  );
+}
+
+export function ScriptLibraryWorkspace({
+  scripts,
+}: {
+  scripts: ScriptResource[];
+}) {
+  const [copyState, setCopyState] = useState<Record<string, string>>({});
+  const categories = Array.from(new Set(scripts.map((script) => script.category)));
+
+  async function copyScript(script: ScriptResource) {
+    const text = [
+      script.title,
+      `Use when: ${script.useWhen}`,
+      `Goal: ${script.goal}`,
+      "",
+      ...script.script,
+      "",
+      `Practice: ${script.practicePrompt ?? "Practice one live rep before using it in the field."}`,
+    ].join("\n");
+
+    if (navigator.clipboard) {
+      await navigator.clipboard.writeText(text);
+      setCopyState((current) => ({ ...current, [script.title]: "Copied" }));
+      window.setTimeout(() => {
+        setCopyState((current) => ({ ...current, [script.title]: "Copy script" }));
+      }, 1400);
+    }
+  }
+
+  return (
+    <section className="grid gap-6">
+      {categories.map((category) => {
+        const categoryScripts = scripts.filter((script) => script.category === category);
+
+        return (
+          <div key={category}>
+            <p className="text-xs font-semibold uppercase tracking-wide text-lf-orange">{category}</p>
+            <div className="mt-3 grid gap-5 xl:grid-cols-2">
+              {categoryScripts.map((script) => (
+                <article key={script.title} className="rounded-2xl border border-lf-line bg-white p-5 shadow-card">
+                  <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+                    <div>
+                      <h2 className="h-display text-2xl">{script.title}</h2>
+                      <div className="mt-4 grid gap-2 text-sm text-lf-charcoal">
+                        <p><strong className="text-lf-navy">Use when:</strong> {script.useWhen}</p>
+                        <p><strong className="text-lf-navy">Goal:</strong> {script.goal}</p>
+                      </div>
+                    </div>
+                    <button type="button" onClick={() => copyScript(script)} className="btn-primary shrink-0">
+                      {copyState[script.title] ?? "Copy script"}
+                    </button>
+                  </div>
+                  <div className="mt-4 grid gap-2 bg-lf-mist p-4 text-sm leading-6 text-lf-charcoal">
+                    {script.script.map((line) => (
+                      <p key={line}>{line}</p>
+                    ))}
+                  </div>
+                  <div className="mt-4 border-l-2 border-lf-orange pl-4">
+                    <p className="text-sm font-semibold text-lf-navy">Practice prompt</p>
+                    <p className="mt-1 text-sm leading-6 text-lf-slate">
+                      {script.practicePrompt ?? "Practice one clean rep and bring the stuck point to coaching."}
+                    </p>
+                  </div>
+                  {script.coachNote && (
+                    <p className="mt-4 text-sm leading-6 text-lf-slate">
+                      <strong className="text-lf-navy">Usage note:</strong> {script.coachNote}
+                    </p>
+                  )}
+                </article>
+              ))}
+            </div>
+          </div>
+        );
+      })}
+    </section>
+  );
+}
+
+export function PlaybookWorkspace({
+  playbooks,
+}: {
+  playbooks: PlaybookResource[];
+}) {
+  const [completed, setCompleted] = useState<Record<string, boolean[]>>(() =>
+    Object.fromEntries(playbooks.map((playbook) => [playbook.title, playbook.steps.map(() => false)])),
+  );
+
+  function toggleStep(title: string, index: number) {
+    setCompleted((current) => {
+      const next = [...(current[title] ?? [])];
+      next[index] = !next[index];
+      return { ...current, [title]: next };
+    });
+  }
+
+  return (
+    <section className="grid gap-5 xl:grid-cols-2">
+      {playbooks.map((playbook) => {
+        const steps = completed[playbook.title] ?? [];
+        const doneCount = steps.filter(Boolean).length;
+
+        return (
+          <article key={playbook.title} className="rounded-2xl border border-lf-line bg-white p-5 shadow-card">
+            <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-wide text-lf-orange">{playbook.category}</p>
+                <h2 className="h-display mt-2 text-2xl">{playbook.title}</h2>
+              </div>
+              <p className="text-sm font-semibold text-lf-slate">{doneCount} of {playbook.steps.length} steps complete</p>
+            </div>
+            <p className="prose-lf mt-3 text-sm text-lf-slate">{playbook.purpose}</p>
+            <div className="mt-5 grid gap-3">
+              {playbook.steps.map((step, index) => (
+                <label key={step} className="flex items-start gap-3 border-l-2 border-lf-orange bg-lf-mist p-3">
+                  <input
+                    type="checkbox"
+                    checked={steps[index] ?? false}
+                    onChange={() => toggleStep(playbook.title, index)}
+                    className="mt-1 h-4 w-4 accent-lf-orange"
+                  />
+                  <span className="text-sm leading-6 text-lf-charcoal">{step}</span>
+                </label>
+              ))}
+            </div>
+            <div className="mt-5 border-t border-lf-line pt-4">
+              <p className="text-sm font-semibold text-lf-navy">Practice prompt</p>
+              <p className="mt-1 text-sm leading-6 text-lf-slate">{playbook.practicePrompt}</p>
+            </div>
+          </article>
+        );
+      })}
     </section>
   );
 }

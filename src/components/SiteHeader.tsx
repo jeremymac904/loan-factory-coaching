@@ -7,9 +7,7 @@ const primaryNav = [
   { label: "Home", href: "/" },
   { label: "LO Mastery", href: "/lo-mastery-coaching/" },
   { label: "Alliance", href: "/loan-factory-alliance/" },
-  { label: "Pricing", href: "/pricing/" },
   { label: "Member Area", href: "/member-area/" },
-  { label: "Resources", href: "/resources/" },
 ];
 
 export default function SiteHeader() {
