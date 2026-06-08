@@ -66,6 +66,7 @@ export type TrackerDefinition = {
   description: string;
   columns: string[];
   rows: string[][];
+  programs?: Array<ProgramKey | "shared">;
 };
 
 export type ScorecardMetric = {
@@ -571,6 +572,7 @@ export const trackerDefinitions: TrackerDefinition[] = [
     description:
       "The working daily list for calls, follow-up, appointments, script reps, and the one priority that must not slip.",
     columns: ["Day", "Theme", "Power block", "Call list", "Follow-up", "Script reps", "Done"],
+    programs: ['mastery', 'alliance'],
     rows: [
       ["Monday", "Database", "8:30-10:30", "Top 25 SOI", "Past clients", "Database check-in", "yes"],
       ["Tuesday", "Pipeline", "8:30-10:30", "Active files", "Tuesday updates", "Status call", "yes"],
@@ -585,6 +587,7 @@ export const trackerDefinitions: TrackerDefinition[] = [
     description:
       "Track partner tier, last useful touch, next promised value, and the next meeting action.",
     columns: ["Agent", "Tier", "Last touch", "Next value", "Meeting", "Next action", "Status"],
+    programs: ['mastery', 'alliance'],
     rows: [
       ["M. Rivera", "A", "Tuesday update example", "Buyer seminar outline", "Friday", "Send agenda", "active"],
       ["K. Nguyen", "B", "Coffee invite", "Loan Factory IQ demo", "Open", "Book 15 minutes", "needs touch"],
@@ -598,6 +601,7 @@ export const trackerDefinitions: TrackerDefinition[] = [
     description:
       "A pipeline view that forces every borrower and partner opportunity to have a next action date.",
     columns: ["Opportunity", "Stage", "Owner", "Next action", "Due", "Stuck point", "Priority"],
+    programs: ['mastery', 'alliance'],
     rows: [
       ["Garcia purchase", "Pre-approved", "Jeremy", "Check home search", "Today", "Waiting on house", "High"],
       ["Davis refi question", "Discovery", "Jeremy", "Review current goals", "Tomorrow", "Needs docs", "Medium"],
@@ -611,6 +615,7 @@ export const trackerDefinitions: TrackerDefinition[] = [
     description:
       "A working queue for quiet leads, pre-approved buyers, past clients, and partner promises that need a next action.",
     columns: ["Contact", "Type", "Last touch", "Next message", "Due", "Owner", "Status"],
+    programs: ['mastery', 'alliance'],
     rows: [
       ["A. Johnson", "Pre-approved buyer", "Home search check-in", "Offer support note", "Today", "Jeremy", "queued"],
       ["M. Rivera", "Realtor partner", "Coffee meeting", "Send buyer seminar outline", "Tomorrow", "Jeremy", "active"],
@@ -624,6 +629,7 @@ export const trackerDefinitions: TrackerDefinition[] = [
     description:
       "Plan each weekday around one revenue theme and one concrete action list.",
     columns: ["Day", "Theme", "Primary list", "Prepared night before", "Number to track", "Recovery plan", "Done"],
+    programs: ['mastery'],
     rows: [
       ["Monday", "Database", "Top 25 plus past clients", "yes", "Calls completed", "Move leftover calls to Thursday", "yes"],
       ["Tuesday", "Pipeline", "All active files", "yes", "Status calls", "Finish before lunch", "yes"],
@@ -638,6 +644,7 @@ export const trackerDefinitions: TrackerDefinition[] = [
     description:
       "Protect the Power Block first, then put appointments, admin, and review work where they belong.",
     columns: ["Block", "Time", "Purpose", "Rules", "Current focus", "Status"],
+    programs: ['mastery'],
     rows: [
       ["Win the morning", "8:00-8:30", "Plan and prep", "No inbox first", "Build call list", "done"],
       ["Power block", "8:30-10:30", "Income-producing activity", "Phone on, email off", "Calls and meetings", "active"],
@@ -652,11 +659,54 @@ export const trackerDefinitions: TrackerDefinition[] = [
     description:
       "A simple accountability view for commitment, mindset, action, and follow-through.",
     columns: ["Area", "Question", "Today", "Evidence", "Next step"],
+    programs: ['mastery', 'alliance'],
     rows: [
       ["Commitment", "Did I protect the work I said mattered?", "yes", "Power block completed", "Repeat tomorrow"],
       ["Mindset", "Did I stay curious when I hit resistance?", "yes", "Used question before advice", "Write the best line"],
       ["Action", "Did I make the important calls?", "partial", "18 touches", "Finish 7 more before 5"],
       ["Follow-through", "Did every open item get a next step?", "no", "Two files missing date", "Assign dates now"],
+    ],
+  },
+  {
+    slug: "conversion-ratio",
+    title: "Conversion Ratio Tracker",
+    description:
+      "Run the business by ratios: touches to conversations to consults to applications to contracts.",
+    columns: ["Stage", "Volume", "Goal", "Ratio", "Owner", "Next step"],
+    programs: ['alliance'],
+    rows: [
+      ["Touches to conversations", "320", "20%", "16%", "Jeremy", "Audit call list quality"],
+      ["Conversations to consults", "52", "60%", "55%", "Jeremy", "Tighten discovery opener"],
+      ["Consults to applications", "29", "70%", "62%", "Jeremy", "Strengthen payment goal ask"],
+      ["Applications to contracts", "18", "65%", "55%", "Jeremy", "Faster condition resolution"],
+    ],
+  },
+  {
+    slug: "partner-tier",
+    title: "Partner Tier Tracker",
+    description:
+      "Tier agent relationships by fit and opportunity, then run A-tier touches with intention.",
+    columns: ["Agent", "Tier", "Volume", "Buyer quality", "Co-build willing", "Next A-tier action"],
+    programs: ['alliance'],
+    rows: [
+      ["M. Rivera", "A", "9 deals YTD", "Strong", "Yes", "Plan co-marketing asset"],
+      ["A. Patel", "A", "7 deals YTD", "Strong", "Yes", "Schedule lunch and learn"],
+      ["K. Nguyen", "B", "4 deals YTD", "Mixed", "Possibly", "Send market update"],
+      ["J. Smith", "C", "2 deals YTD", "Watch", "No", "Hold quarterly update only"],
+    ],
+  },
+  {
+    slug: "content-rhythm",
+    title: "Content Rhythm Tracker",
+    description:
+      "Plan, batch, and ship weekly content with a tracked cadence and a clear review point.",
+    columns: ["Week", "Format", "Topic", "Drafted", "Posted", "Reviewed"],
+    programs: ['alliance'],
+    rows: [
+      ["Week 1", "Short video", "First-time buyer myth", "yes", "yes", "Coach reviewed"],
+      ["Week 2", "Market update", "Local rate snapshot", "yes", "yes", "Coach reviewed"],
+      ["Week 3", "Partner spotlight", "Realtor story", "drafted", "no", "Pending"],
+      ["Week 4", "Buyer education", "Pre-approval explained", "no", "no", "Next batch"],
     ],
   },
 ];
@@ -665,7 +715,7 @@ export const scriptLibrary: ScriptResource[] = [
   {
     title: "Realtor First Call Script",
     category: "Realtor",
-    programs: ["shared"],
+    programs: ['mastery', 'alliance'],
     useWhen: "First contact with an agent.",
     goal: "Earn a meeting, not diagnose their business on the first call.",
     script: [
@@ -688,7 +738,7 @@ export const scriptLibrary: ScriptResource[] = [
   {
     title: "Database Quarterly Check-In",
     category: "Database",
-    programs: ["mastery", "alliance"],
+    programs: ['mastery', 'alliance'],
     useWhen: "Touching sphere of influence and past relationship contacts.",
     goal: "Strengthen the relationship and open the door to referrals.",
     script: [
@@ -704,7 +754,7 @@ export const scriptLibrary: ScriptResource[] = [
   {
     title: "Buyer Rate Question",
     category: "Buyer",
-    programs: ["mastery", "alliance"],
+    programs: ['mastery', 'alliance'],
     useWhen: "A borrower asks for rates before you know the file.",
     goal: "Turn a price question into a useful consultation.",
     script: [
@@ -720,7 +770,7 @@ export const scriptLibrary: ScriptResource[] = [
   {
     title: "Quiet Lead Re-Engagement",
     category: "Follow-Up",
-    programs: ["mastery", "alliance"],
+    programs: ['mastery', 'alliance'],
     useWhen: "A warm lead has gone quiet.",
     goal: "Restart the conversation without sounding pushy.",
     script: [
@@ -735,7 +785,7 @@ export const scriptLibrary: ScriptResource[] = [
   {
     title: "Tuesday Status Call",
     category: "Client Care",
-    programs: ["mastery", "alliance"],
+    programs: ['mastery', 'alliance'],
     useWhen: "Every active file, every Tuesday.",
     goal: "Keep clients and partners out of the dark.",
     script: [
@@ -752,7 +802,7 @@ export const scriptLibrary: ScriptResource[] = [
   {
     title: "Objection Reframe Script",
     category: "Objection",
-    programs: ["mastery", "alliance"],
+    programs: ['mastery', 'alliance'],
     useWhen: "A borrower, agent, or partner pushes back before you understand the real concern.",
     goal: "Stay calm, get curious, reframe the issue, and move to a next step.",
     script: [
@@ -769,7 +819,7 @@ export const scriptLibrary: ScriptResource[] = [
   {
     title: "Past Client Referral Ask",
     category: "Referral",
-    programs: ["mastery", "alliance"],
+    programs: ['mastery', 'alliance'],
     useWhen: "A past client had a good experience and the relationship is warm.",
     goal: "Ask plainly for an introduction without making it awkward.",
     script: [
@@ -785,7 +835,7 @@ export const scriptLibrary: ScriptResource[] = [
   {
     title: "Database Reactivation Script",
     category: "Reactivation",
-    programs: ["alliance"],
+    programs: ['alliance'],
     useWhen: "Alliance members are reactivating dormant leads, database segments, or past client lists.",
     goal: "Restart useful conversations from an organized campaign without sounding automated.",
     script: [
@@ -798,13 +848,81 @@ export const scriptLibrary: ScriptResource[] = [
       "Pick one dormant database segment and write the first personal line for five people before sending.",
     coachNote: "Alliance reactivation should feel personal even when it is systemized.",
   },
+  {
+    title: "Tier-A Agent Value Plan Script",
+    category: "Partner Strategy",
+    programs: ['alliance'],
+    useWhen: "Alliance members are designing the value plan they will deliver to their top agent partners.",
+    goal: "Translate tier status into a written value plan the partner can actually feel.",
+    script: [
+      "Hey [Agent], I want to share how I am thinking about our partnership this quarter.",
+      "You are a tier-A partner for me, which means I am building the work around the way you run your business.",
+      "Here is what I will commit to: [co-marketing asset], [monthly market snapshot], [buyer education support].",
+      "Here is what helps me most from you: [shared listing alerts], [early access on tough files], [one referral ask a month].",
+      "Does this match how you want to work? What would you add?",
+    ],
+    practicePrompt:
+      "Pick one tier-A agent and write the three commitments plus the three asks before sending.",
+    coachNote: "A value plan is a partnership contract. Make the asks explicit so the relationship is two-sided.",
+  },
+  {
+    title: "Leverage Role Definition Script",
+    category: "Leadership",
+    programs: ['alliance'],
+    useWhen: "Alliance members are defining the next support role they will hire or contract.",
+    goal: "Separate only-me work from delegable work and turn it into a real role description.",
+    script: [
+      "I am sitting down to design the next support role for my business.",
+      "Here is what I want this person to own in the first 30 days: [specific deliverable].",
+      "Here is what I am keeping for myself: [relationship work, partner strategy, deal review].",
+      "Here is how I will measure success: [one number, one quality standard, one weekly check-in].",
+      "Who do you know that would be a strong fit for this kind of role?",
+    ],
+    practicePrompt:
+      "Write a 30-day outcome, a 60-day outcome, and a list of only-me work before posting the role.",
+    coachNote: "If you cannot name the only-me work, you are not ready to delegate. Start there.",
+  },
+  {
+    title: "Pre-Approval Confidence Builder",
+    category: "Buyer",
+    programs: ['mastery'],
+    useWhen: "An LO Mastery member is walking a nervous first-time buyer through pre-approval.",
+    goal: "Make the borrower feel certain about the next step without overpromising numbers.",
+    script: [
+      "Here is what we know after pulling credit: [factual summary].",
+      "Here is the price range that fits your payment goal and your cash-to-close goal.",
+      "Here is what I need from you to move us to a clear pre-approval: [list].",
+      "Here is what I will handle on my end this week: [list].",
+      "If anything changes with your job, income, or debt, tell me before you make the change, not after.",
+    ],
+    practicePrompt:
+      "Pick one active pre-approval and rewrite the four-part message in your own voice.",
+    coachNote: "Confidence comes from clarity. The borrower should know the next step before they hang up.",
+  },
+  {
+    title: "Tuesday Status Call Discipline Script",
+    category: "Client Care",
+    programs: ['mastery'],
+    useWhen: "An LO Mastery member is calling every active file every Tuesday.",
+    goal: "Make the Tuesday call short, predictable, and useful for the client.",
+    script: [
+      "Hey [Name], it is [Your Name] with your Tuesday update.",
+      "Here is where the file sits today: [one sentence].",
+      "Here is what I need from you this week: [one item or nothing].",
+      "Here is what I am doing on my end: [one item].",
+      "Any questions before I let you go?",
+    ],
+    practicePrompt:
+      "Build a one-line template you can reuse for every Tuesday call and stick it next to your desk.",
+    coachNote: "Predictable communication beats fancy communication. The Tuesday call is a habit, not an event.",
+  },
 ];
 
 export const playbookLibrary: PlaybookResource[] = [
   {
     title: "Daily Time Blocking Playbook",
     category: "Execution",
-    programs: ["mastery", "alliance"],
+    programs: ['mastery', 'alliance'],
     purpose: "Protect income-producing work before reactive work takes over the day.",
     steps: [
       "Plan tomorrow before the day ends.",
@@ -818,7 +936,7 @@ export const playbookLibrary: PlaybookResource[] = [
   {
     title: "Theme Days Playbook",
     category: "Execution",
-    programs: ["mastery", "alliance"],
+    programs: ['mastery', 'alliance'],
     purpose: "Give every weekday a clear job so the member is not deciding from scratch every morning.",
     steps: [
       "Monday: database and past clients.",
@@ -833,7 +951,7 @@ export const playbookLibrary: PlaybookResource[] = [
   {
     title: "Realtor Growth Playbook",
     category: "Partners",
-    programs: ["mastery", "alliance"],
+    programs: ['mastery', 'alliance'],
     purpose: "Turn agent outreach into useful relationship building instead of pitching.",
     steps: [
       "Build a focused list of agents.",
@@ -848,7 +966,7 @@ export const playbookLibrary: PlaybookResource[] = [
   {
     title: "Buyer Consultation Playbook",
     category: "Conversion",
-    programs: ["mastery", "alliance"],
+    programs: ['mastery', 'alliance'],
     purpose: "Use discovery before advice so the member does not become a rate quote machine.",
     steps: [
       "Ask payment goal, cash-to-close goal, timeline, and ownership goal.",
@@ -861,7 +979,7 @@ export const playbookLibrary: PlaybookResource[] = [
   {
     title: "Follow-Up System Playbook",
     category: "Follow-Up",
-    programs: ["mastery", "alliance"],
+    programs: ['mastery', 'alliance'],
     purpose: "Keep every warm lead, buyer, partner, and past client on a visible next action.",
     steps: [
       "Separate warm leads, pre-approved buyers, past clients, and partner promises.",
@@ -875,7 +993,7 @@ export const playbookLibrary: PlaybookResource[] = [
   {
     title: "Database Reactivation Playbook",
     category: "Alliance",
-    programs: ["alliance"],
+    programs: ['alliance'],
     purpose: "Reactivate dormant value from past clients, sphere, partners, and older opportunities.",
     steps: [
       "Segment the database.",
@@ -887,6 +1005,48 @@ export const playbookLibrary: PlaybookResource[] = [
     practicePrompt: "Pick one database segment and write the message angle before opening email or CRM.",
     resourceTitle: "Follow Up System",
   },
+  {
+    title: "Advanced Pipeline Inspection Playbook",
+    category: "Alliance",
+    programs: ['alliance'],
+    purpose: "Run the pipeline by ratios, not by vibes, and turn stuck stages into next actions.",
+    steps: [
+      "Pull every active file into the conversion ratio tracker.",
+      "Identify the weakest handoff in the funnel.",
+      "Pick one system fix for the weakest handoff.",
+      "Document the new workflow before the next review.",
+      "Bring the ratio change to coach review next week.",
+    ],
+    practicePrompt: "Map the current touches to contracts ratio before the next coaching call.",
+  },
+  {
+    title: "Partner Tier Review Playbook",
+    category: "Alliance",
+    programs: ['alliance'],
+    purpose: "Re-tier Realtor partners each quarter and focus A-tier touches with intention.",
+    steps: [
+      "Pull every active agent relationship into the partner tier tracker.",
+      "Score by volume, buyer quality, response speed, and co-build willingness.",
+      "Confirm the A-tier list with the manager if needed.",
+      "Write the value plan for each A-tier partner.",
+      "Schedule the next quarterly review point.",
+    ],
+    practicePrompt: "Pick three A-tier partners and write the value plan you will deliver this month.",
+  },
+  {
+    title: "First-Time Buyer Walkthrough Playbook",
+    category: "Mastery",
+    programs: ['mastery'],
+    purpose: "Take a nervous first-time borrower from first call to a confident pre-approval.",
+    steps: [
+      "Open with what they are trying to accomplish, not with rates.",
+      "Use the four-goal framework: payment, cash-to-close, timeline, ownership.",
+      "Set the price range based on their real numbers.",
+      "Send the pre-approval checklist the same day.",
+      "Schedule the Tuesday status call before you hang up.",
+    ],
+    practicePrompt: "Walk one first-time buyer through the full framework before your next live call.",
+  },
 ];
 
 export const downloadResources: DownloadResource[] = [
@@ -895,7 +1055,7 @@ export const downloadResources: DownloadResource[] = [
     description: "The foundational weekly program map, actions, coaching notes, and asset index.",
     category: "Curriculum",
     audience: "Member",
-    programs: ["mastery"],
+    programs: ['mastery'],
     pdf: "https://drive.google.com/file/d/1aqhM_KfgJn00ll78z5HpWxeT_0bX85xm/view?usp=drivesdk",
     docx: "https://docs.google.com/document/d/1sqJSCvbsrjSDa7LhFFPvoE2HwbQ0VZQl/edit?usp=drivesdk&ouid=110305764628203153224&rtpof=true&sd=true",
   },
@@ -904,7 +1064,7 @@ export const downloadResources: DownloadResource[] = [
     description: "Advanced weekly program map for systems, partners, leadership, and leverage.",
     category: "Curriculum",
     audience: "Member",
-    programs: ["alliance"],
+    programs: ['alliance'],
     pdf: "https://drive.google.com/file/d/1Q-70umaSW3fgaAM9Bt_dYV0IPhyfTcyQ/view?usp=drivesdk",
     docx: "https://docs.google.com/document/d/1OKREYevozajWHfZ_aInHiZQa84_l_gdM/edit?usp=drivesdk&ouid=110305764628203153224&rtpof=true&sd=true",
   },
@@ -913,7 +1073,7 @@ export const downloadResources: DownloadResource[] = [
     description: "Realtor, borrower, follow-up, database, objection, and client-care scripts.",
     category: "Scripts",
     audience: "All",
-    programs: ["shared"],
+    programs: ['mastery', 'alliance'],
     pdf: "https://drive.google.com/file/d/1zA44f6JzhyA4RqpM-cZf46ojA08dLwTJ/view?usp=drivesdk",
     docx: "https://docs.google.com/document/d/1DPMFVz1DF9wQbJVrDolk_eJF3NPF_OtS/edit?usp=drivesdk&ouid=110305764628203153224&rtpof=true&sd=true",
   },
@@ -922,7 +1082,7 @@ export const downloadResources: DownloadResource[] = [
     description: "One-page weekly scorecard for leading activity, reflection, and coach review.",
     category: "Trackers",
     audience: "All",
-    programs: ["shared"],
+    programs: ['mastery', 'alliance'],
     pdf: "https://drive.google.com/file/d/1UQLx7O4idAeQxYF045beP9Twgq2XsB67/view?usp=drivesdk",
     docx: "https://docs.google.com/document/d/1c8xYdMBClpgNaBLE0bXb1cJDulFgupDz/edit?usp=drivesdk&ouid=110305764628203153224&rtpof=true&sd=true",
   },
@@ -931,7 +1091,7 @@ export const downloadResources: DownloadResource[] = [
     description: "12-week coach-and-member shared view for commitments, weekly numbers, and on-track status.",
     category: "Trackers",
     audience: "All",
-    programs: ["shared"],
+    programs: ['mastery', 'alliance'],
     pdf: "https://drive.google.com/file/d/1KJaUPWQ8dFwa193wWH5r-_Vtk36VTfoP/view?usp=drivesdk",
     docx: "https://docs.google.com/document/d/1Yjz7W8CUfCmGW3r46AFIfqnrYj3jlIQp/edit?usp=drivesdk&ouid=110305764628203153224&rtpof=true&sd=true",
   },
@@ -940,7 +1100,7 @@ export const downloadResources: DownloadResource[] = [
     description: "Daily planning templates for protected Power Blocks, appointments, admin, and review.",
     category: "Trackers",
     audience: "Member",
-    programs: ["mastery", "alliance"],
+    programs: ['mastery', 'alliance'],
     pdf: "https://drive.google.com/file/d/1PxpN74w-IK3frRR2ympGC5K3mJOXbrbd/view?usp=drivesdk",
     docx: "https://docs.google.com/document/d/1Q-_uYd4I9PtpQWERJMIG5lpmPy77KAMA/edit?usp=drivesdk&ouid=110305764628203153224&rtpof=true&sd=true",
   },
@@ -949,7 +1109,7 @@ export const downloadResources: DownloadResource[] = [
     description: "Daily accountability tracker for commitment, mindset, action, and follow-through.",
     category: "Trackers",
     audience: "Member",
-    programs: ["mastery", "alliance"],
+    programs: ['mastery', 'alliance'],
     pdf: "https://drive.google.com/file/d/1r4w7CMj99uh6tnD8Zl7kp-yzSfqvjbFD/view?usp=drivesdk",
     docx: "https://docs.google.com/document/d/16it2AjTKgxtnL0gnzuJMR1IHYC5uqsKZ/edit?usp=drivesdk&ouid=110305764628203153224&rtpof=true&sd=true",
   },
@@ -958,7 +1118,7 @@ export const downloadResources: DownloadResource[] = [
     description: "The weekday operating rhythm for database, pipeline, partners, follow-up, and planning.",
     category: "Playbooks",
     audience: "All",
-    programs: ["shared"],
+    programs: ['mastery', 'alliance'],
     pdf: "https://drive.google.com/file/d/1RnHBUW58Q83jyvOFYhnRC-gbsVY2_6Um/view?usp=drivesdk",
     docx: "https://docs.google.com/document/d/1DTQcRuNnEVLivNDeZyGfbvEXB6SVHlf9/edit?usp=drivesdk&ouid=110305764628203153224&rtpof=true&sd=true",
   },
@@ -967,7 +1127,7 @@ export const downloadResources: DownloadResource[] = [
     description: "Follow-up rhythm for pre-approved buyers, quiet leads, past clients, and next-action discipline.",
     category: "Playbooks",
     audience: "All",
-    programs: ["mastery", "alliance"],
+    programs: ['mastery', 'alliance'],
     pdf: "https://drive.google.com/file/d/1XK_2bg8PvpJYP8PJNVwnOYwH1sVuKF8A/view?usp=drivesdk",
     docx: "https://docs.google.com/document/d/1NaGl_kTosVKENRqwrr7EOzRY_IHLJRYh/edit?usp=drivesdk&ouid=110305764628203153224&rtpof=true&sd=true",
   },
@@ -976,7 +1136,7 @@ export const downloadResources: DownloadResource[] = [
     description: "Partner development system for agent outreach, useful value, meetings, and relationship follow-through.",
     category: "Playbooks",
     audience: "All",
-    programs: ["mastery", "alliance"],
+    programs: ['mastery', 'alliance'],
     pdf: "https://drive.google.com/file/d/1PxMVznSC2VDg6VA6NIXoo9mIMvsu8soc/view?usp=drivesdk",
     docx: "https://docs.google.com/document/d/1OgJ1Kiz98YdRhixf3OSnBTXXxpNi9NFb/edit?usp=drivesdk&ouid=110305764628203153224&rtpof=true&sd=true",
   },
@@ -985,7 +1145,7 @@ export const downloadResources: DownloadResource[] = [
     description: "Coach-facing operating guide for member review, coaching rhythm, feedback, and accountability.",
     category: "Coach Tools",
     audience: "Coach",
-    programs: ["shared"],
+    programs: ['mastery', 'alliance'],
     pdf: "https://drive.google.com/file/d/1EGRpITWSboNDXo4_-tj1DePOJSjsVeY3/view?usp=drivesdk",
     docx: "https://docs.google.com/document/d/1QVBbH2uXqqK1bNvcLHF03OgWcBEF1IIz/edit?usp=drivesdk&ouid=110305764628203153224&rtpof=true&sd=true",
   },
@@ -994,7 +1154,7 @@ export const downloadResources: DownloadResource[] = [
     description: "Call-prep and review worksheet for checkpoints, member obstacles, and next actions.",
     category: "Coach Tools",
     audience: "Coach",
-    programs: ["shared"],
+    programs: ['mastery', 'alliance'],
     pdf: "https://drive.google.com/file/d/1xEP6u29mBwLeX1vDV_1mWpwL3Xhp1AuK/view?usp=drivesdk",
     docx: "https://docs.google.com/document/d/13J6yiS0eVakTnlrockFwHFZU9KUcBoTb/edit?usp=drivesdk&ouid=110305764628203153224&rtpof=true&sd=true",
   },
@@ -1003,7 +1163,7 @@ export const downloadResources: DownloadResource[] = [
     description: "Full program reference packet for leaders, coaches, and review stakeholders.",
     category: "Playbooks",
     audience: "All",
-    programs: ["shared"],
+    programs: ['mastery', 'alliance'],
     pdf: "https://drive.google.com/file/d/1Jm9dQPGPUAI5Q_e_EvE114ugXqzq7CLI/view?usp=drivesdk",
     docx: "https://docs.google.com/document/d/1CodlNMOr5ps6DrKYSPWd76lMbBipiTcR/edit?usp=drivesdk&ouid=110305764628203153224&rtpof=true&sd=true",
   },
@@ -1015,8 +1175,19 @@ export const communityPosts: CommunityPost[] = [
     role: "Coach",
     category: "Pinned",
     title: "This week's focus: protect the Power Block",
-    body: "Before coaching, complete the weekly scorecard and bring one place where your schedule broke. We are not guessing this week. We are looking at the calendar, the calls, and the next action.",
+    body:
+      "Before coaching, complete the weekly scorecard and bring one place where your schedule broke. We are not guessing this week. We are looking at the calendar, the calls, and the next action.",
     comments: ["Bring the number and the obstacle.", "Post one adjustment that protects tomorrow morning."],
+    pinned: true,
+  },
+  {
+    author: "Jeremy McDonald",
+    role: "Coach",
+    category: "Pinned",
+    title: "Realtor first call: open with curiosity, not pitch",
+    body:
+      "The first call is about trust. Ask three discovery questions before mentioning Loan Factory, agents, or rates. Bring the value plan to the meeting, not the call.\n\nYouTube link: https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+    comments: ["I used this opener and booked two coffees.", "Open with the question, then stay quiet long enough to hear the answer."],
     pinned: true,
   },
   {
@@ -1024,7 +1195,8 @@ export const communityPosts: CommunityPost[] = [
     role: "LO Mastery",
     category: "Wins",
     title: "Booked two agent coffees using the softer first call",
-    body: "The discovery version felt better. I asked what agents were seeing instead of pitching, and the conversation opened up.",
+    body:
+      "The discovery version felt better. I asked what agents were seeing instead of pitching, and the conversation opened up.",
     comments: ["Drop the line that worked best.", "Good example of earning the meeting first."],
   },
   {
@@ -1032,7 +1204,8 @@ export const communityPosts: CommunityPost[] = [
     role: "Alliance",
     category: "Questions",
     title: "How are you tiering agents this week?",
-    body: "I have ten active Realtor relationships but only three feel like A-tier. What criteria are you using besides production?",
+    body:
+      "I have ten active Realtor relationships but only three feel like A-tier. What criteria are you using besides production?",
     comments: ["Fit, response speed, buyer quality, and willingness to co-build.", "Bring this into the Wednesday partner thread."],
   },
   {
@@ -1040,16 +1213,26 @@ export const communityPosts: CommunityPost[] = [
     role: "Coach",
     category: "Scripts",
     title: "Buyer consultation reminder",
-    body: "Payment, cash-to-close, timeline, and ownership goal must come before advice. If you skip discovery, the call becomes rate shopping.",
+    body:
+      "Payment, cash-to-close, timeline, and ownership goal must come before advice. If you skip discovery, the call becomes rate shopping.",
     comments: ["Use the consultation planner before the call.", "Record one practice rep this week."],
+  },
+  {
+    author: "Sam T.",
+    role: "LO Mastery",
+    category: "Wins",
+    title: "Cleared the Tuesday backlog before lunch",
+    body:
+      "I batched every active file into one sitting, called each one, and wrote the next action on the tracker. The week got lighter after that.",
+    comments: ["Tuesday rhythm is the difference. Glad it clicked."],
   },
 ];
 
-export const leaderboardRows = [
-  ["Maria R.", "5 blocks", "22 conversations", "100% scorecard"],
-  ["Andre L.", "14 partner touches", "3 meetings", "2 systems improved"],
-  ["Sam T.", "48 calls", "6 consults", "Scorecard complete"],
-  ["Leslie P.", "Coach responses", "8 notes", "4 reviews ready"],
+export const leaderboardRows: { name: string; metric: string; detail: string }[] = [
+  { name: "Maria R.", metric: "5 blocks · 22 conversations", detail: "100% scorecard complete" },
+  { name: "Andre L.", metric: "14 partner touches", detail: "3 meetings · 2 systems improved" },
+  { name: "Sam T.", metric: "48 calls · 6 consults", detail: "Scorecard complete" },
+  { name: "Leslie P.", metric: "Coach responses · 8 notes", detail: "4 reviews ready" },
 ];
 
 export const calendarItems = [

@@ -31,7 +31,7 @@ export default function ScriptLibraryPage() {
             <a
               key={c}
               href={`#cat-${c.replace(/\s+/g, "-").toLowerCase()}`}
-              className="pill hover:border-lf-navy hover:text-lf-navy"
+              className="inline-flex items-center rounded-lg border border-lf-navy bg-white px-3 py-2 text-xs font-semibold text-lf-navy transition hover:bg-lf-navy hover:text-white"
             >
               {c}
             </a>

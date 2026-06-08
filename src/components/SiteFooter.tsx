@@ -6,71 +6,47 @@ const footerLinks = [
   { href: "/", label: "Home" },
   { href: "/lo-mastery-coaching/", label: "LO Mastery" },
   { href: "/loan-factory-alliance/", label: "Loan Factory Alliance" },
+  { href: "/apply/", label: "Apply" },
+  { href: "/login/", label: "Sign in" },
   { href: "/member-area/", label: "Member Area" },
   { href: "/coach-command-center/", label: "Coach Command Center" },
   { href: "/manager-dashboard/", label: "Manager Dashboard" },
+  { href: "/admin/", label: "Admin" },
 ];
 
 export default function SiteFooter() {
   return (
-    <footer className="mt-20 border-t border-black bg-black text-white">
-      <div className="container-page py-12">
-        <div className="grid gap-8 border-b border-white/10 pb-8 lg:grid-cols-[1fr_1.15fr] lg:items-end">
+    <footer className="mt-20 bg-black text-white">
+      <div className="w-full px-5 py-12 md:px-10">
+        <div className="grid gap-10 border-b border-white/10 pb-10 lg:grid-cols-[1.2fr_1fr]">
           <div>
             <BrandImage
               asset={brandAssets["loan-factory"]}
-              heightClass="h-9"
+              heightClass="h-10"
             />
-            <p className="mt-5 max-w-xl text-sm leading-6 text-white/70">
+            <p className="mt-5 max-w-xl text-sm leading-6 text-white/72">
               Paid coaching for Loan Factory loan officers who want structure,
               weekly accountability, daily execution, and better follow-through.
             </p>
-          </div>
-          <div className="grid gap-3 sm:grid-cols-2">
-            <div className="rounded-xl border border-white/10 bg-white/[0.04] p-4">
-              <p className="text-xs font-semibold uppercase tracking-wide text-lf-orange">
-                Programs
-              </p>
-              <p className="mt-2 text-sm text-white/72">
-                LO Mastery and Loan Factory Alliance.
-              </p>
-            </div>
-            <div className="rounded-xl border border-white/10 bg-white/[0.04] p-4">
-              <p className="text-xs font-semibold uppercase tracking-wide text-lf-orange">
-                Operating rhythm
-              </p>
-              <p className="mt-2 text-sm text-white/72">
-                Coaching, scorecards, trackers, scripts, and community.
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div className="mt-8 grid gap-8 lg:grid-cols-[0.9fr_1.4fr]">
-          <div>
-            <p className="text-sm font-semibold text-white">
-              Loan Factory Paid Coaching Platform
-            </p>
-            <p className="mt-2 text-sm leading-6 text-white/64">
+            <p className="mt-4 text-xs uppercase tracking-wide text-lf-orange">
               Simple structure. Clear accountability. Better weekly execution.
             </p>
           </div>
-          <div className="grid gap-x-6 gap-y-3 text-sm sm:grid-cols-2">
+          <nav aria-label="Footer navigation" className="grid grid-cols-2 gap-x-6 gap-y-3 text-sm">
             {footerLinks.map((item) => (
               <Link
                 key={`${item.href}-${item.label}`}
                 href={item.href}
-                className="text-white/72 hover:text-lf-orange"
+                className="text-white/80 hover:text-lf-orange"
               >
                 {item.label}
               </Link>
             ))}
-          </div>
+          </nav>
         </div>
-        <div className="mt-10 flex flex-col gap-4 border-t border-white/10 pt-5 text-sm text-white/55 md:flex-row md:items-center md:justify-between">
-          <p>
-            Internal coaching platform review build.
-          </p>
+
+        <div className="mt-8 flex flex-col gap-4 text-sm text-white/60 md:flex-row md:items-center md:justify-between">
+          <p>Internal coaching platform review build.</p>
           <p>
             Jeremy McDonald ·{" "}
             <a className="font-semibold text-white hover:text-lf-orange" href="tel:9044423213">

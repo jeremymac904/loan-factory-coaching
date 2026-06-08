@@ -175,13 +175,16 @@ export default async function HomePage({ searchParams }: Props) {
               <Link
                 key={feature.title}
                 href={feature.href ?? "/member-area/"}
-                className="card flex min-h-[210px] flex-col gap-4 transition hover:-translate-y-0.5 hover:shadow-lift"
+                className="card flex min-h-[210px] flex-col gap-4 transition hover:-translate-y-0.5 hover:border-lf-orange hover:shadow-lift"
               >
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-lf-orangeSoft text-sm font-black text-lf-orange">
-                  {feature.title.slice(0, 1)}
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-lf-orangeSoft">
+                  <span aria-hidden className="h-2 w-2 rounded-full bg-lf-orange" />
                 </div>
                 <h3 className="h-display text-xl">{feature.title}</h3>
                 <p className="prose-lf text-sm text-lf-slate">{feature.body}</p>
+                <span className="mt-auto text-sm font-semibold text-lf-orange">
+                  Open <span aria-hidden>&rarr;</span>
+                </span>
               </Link>
             ))}
           </div>

@@ -455,6 +455,45 @@ export function TrackerWorkspace({ trackers }: { trackers: TrackerDefinition[] }
   );
 }
 
+function youtubeIdFromUrl(rawUrl: string) {
+  if (!rawUrl) return null;
+  const trimmed = rawUrl.trim();
+  if (!trimmed) return null;
+  const patterns = [
+    /youtu\.be\/([\w-]{6,})/i,
+    /youtube\.com\/watch\?v=([\w-]{6,})/i,
+    /youtube\.com\/embed\/([\w-]{6,})/i,
+    /youtube\.com\/shorts\/([\w-]{6,})/i,
+  ];
+  for (const pattern of patterns) {
+    const match = trimmed.match(pattern);
+    if (match?.[1]) {
+      return match[1];
+    }
+  }
+  return null;
+}
+
+function extractYoutubeId(body: string) {
+  const lines = body.split("\n");
+  for (const line of lines) {
+    if (line.startsWith("YouTube link:")) {
+      const id = youtubeIdFromUrl(line.replace("YouTube link:", "").trim());
+      if (id) return id;
+    }
+  }
+  return null;
+}
+
+function stripYoutubeLinkLine(body: string) {
+  return body
+    .split("\n")
+    .filter((line) => !line.startsWith("YouTube link:"))
+    .join("\n")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+}
+
 export function CommunityExperience({
   posts,
   leaderboard,
@@ -467,12 +506,17 @@ export function CommunityExperience({
   const [localPosts, setLocalPosts] = useState(posts);
   const [composer, setComposer] = useState("");
   const [composerCategory, setComposerCategory] = useState("Questions");
+  const [composerTitle, setComposerTitle] = useState("");
   const [youtubeUrl, setYoutubeUrl] = useState("");
-  const [attachmentType, setAttachmentType] = useState("No attachment");
+  const [imageCaption, setImageCaption] = useState("");
   const [pollPrompt, setPollPrompt] = useState("");
   const [draftState, setDraftState] = useState("Draft ready");
+  const [openComments, setOpenComments] = useState<Record<string, boolean>>({});
+  const [commentDraft, setCommentDraft] = useState<Record<string, string>>({});
   const visiblePosts = localPosts.filter(
-    (post) => activeCategory === "All" || post.category === activeCategory,
+    (post) =>
+      activeCategory === "All" ||
+      (activeCategory === "Pinned" ? post.pinned : post.category === activeCategory),
   );
 
   function addPost() {
@@ -481,27 +525,52 @@ export function CommunityExperience({
       return;
     }
 
-    setLocalPosts((current) => [
-      {
-        author: "Member",
-        role: "Member",
-        category: composerCategory,
-        title: trimmed.split("\n")[0].slice(0, 80),
-        body: [
-          trimmed,
-          youtubeUrl ? `YouTube link: ${youtubeUrl}` : "",
-          attachmentType !== "No attachment" ? `Attachment placeholder: ${attachmentType}` : "",
-          pollPrompt ? `Poll prompt: ${pollPrompt}` : "",
-        ].filter(Boolean).join("\n\n"),
-        comments: ["Added from the browser composer."],
-      },
-      ...current,
-    ]);
+    const title =
+      composerTitle.trim() || trimmed.split("\n")[0].slice(0, 80) || "Member update";
+    const newPost: CommunityPost = {
+      author: "You",
+      role: "Member",
+      category: composerCategory,
+      title,
+      body: [
+        trimmed,
+        youtubeUrl ? `YouTube link: ${youtubeUrl}` : "",
+        imageCaption ? `Image caption: ${imageCaption}` : "",
+        pollPrompt ? `Poll prompt: ${pollPrompt}` : "",
+      ]
+        .filter(Boolean)
+        .join("\n\n"),
+      comments: [],
+    };
+
+    setLocalPosts((current) => [newPost, ...current]);
     setComposer("");
+    setComposerTitle("");
     setYoutubeUrl("");
+    setImageCaption("");
     setPollPrompt("");
-    setAttachmentType("No attachment");
     setDraftState("Posted locally");
+  }
+
+  function addComment(postKey: string) {
+    const draft = (commentDraft[postKey] ?? "").trim();
+    if (!draft) {
+      return;
+    }
+
+    setLocalPosts((current) =>
+      current.map((post, index) => {
+        const key = `${post.title}-${index}`;
+        if (key !== postKey) {
+          return post;
+        }
+        return {
+          ...post,
+          comments: [...post.comments, `You: ${draft}`],
+        };
+      }),
+    );
+    setCommentDraft((current) => ({ ...current, [postKey]: "" }));
   }
 
   return (
@@ -539,21 +608,36 @@ export function CommunityExperience({
       <main className="grid gap-5">
         <div className="rounded-2xl border border-lf-line bg-white p-5 shadow-card">
           <div className="grid gap-4">
-            <label className="grid gap-2 text-sm font-semibold text-lf-navy">
-              Category
-              <select
-                value={composerCategory}
-                onChange={(event) => {
-                  setComposerCategory(event.target.value);
-                  setDraftState("Draft saved locally");
-                }}
-                className="h-11 rounded-lg border border-lf-line px-3 text-sm font-normal text-lf-charcoal outline-none focus:border-lf-orange"
-              >
-                {["Wins", "Questions", "Scripts"].map((category) => (
-                  <option key={category}>{category}</option>
-                ))}
-              </select>
-            </label>
+            <div className="grid gap-3 sm:grid-cols-[1fr_220px]">
+              <label className="grid gap-2 text-sm font-semibold text-lf-navy">
+                Post title
+                <input
+                  aria-label="Post title"
+                  value={composerTitle}
+                  onChange={(event) => {
+                    setComposerTitle(event.target.value);
+                    setDraftState("Draft saved locally");
+                  }}
+                  className="h-11 rounded-lg border border-lf-line px-3 text-sm font-normal text-lf-charcoal outline-none focus:border-lf-orange"
+                  placeholder="Short, specific, useful"
+                />
+              </label>
+              <label className="grid gap-2 text-sm font-semibold text-lf-navy">
+                Category
+                <select
+                  value={composerCategory}
+                  onChange={(event) => {
+                    setComposerCategory(event.target.value);
+                    setDraftState("Draft saved locally");
+                  }}
+                  className="h-11 rounded-lg border border-lf-line px-3 text-sm font-normal text-lf-charcoal outline-none focus:border-lf-orange"
+                >
+                  {["Wins", "Questions", "Scripts"].map((category) => (
+                    <option key={category}>{category}</option>
+                  ))}
+                </select>
+              </label>
+            </div>
             <label className="grid gap-3 text-sm font-semibold text-lf-navy">
               Share a win, question, script example, or stuck point
               <textarea
@@ -582,19 +666,17 @@ export function CommunityExperience({
                 />
               </label>
               <label className="grid gap-2 text-sm font-semibold text-lf-navy">
-                Media placeholder
-                <select
-                  value={attachmentType}
+                Image caption
+                <input
+                  aria-label="Image caption"
+                  value={imageCaption}
                   onChange={(event) => {
-                    setAttachmentType(event.target.value);
+                    setImageCaption(event.target.value);
                     setDraftState("Draft saved locally");
                   }}
                   className="h-11 rounded-lg border border-lf-line px-3 text-sm font-normal text-lf-charcoal outline-none focus:border-lf-orange"
-                >
-                  {["No attachment", "Image placeholder", "Small video placeholder"].map((option) => (
-                    <option key={option}>{option}</option>
-                  ))}
-                </select>
+                  placeholder="Describe the screenshot or chart"
+                />
               </label>
               <label className="grid gap-2 text-sm font-semibold text-lf-navy">
                 Poll prompt
@@ -611,7 +693,7 @@ export function CommunityExperience({
               </label>
             </div>
           </div>
-          <div className="mt-4 flex justify-end">
+          <div className="mt-4 flex flex-wrap items-center justify-end gap-3">
             <p className="mr-auto self-center text-sm font-semibold text-lf-slate">{draftState}</p>
             <button type="button" onClick={addPost} className="btn-primary">
               Add to feed
@@ -619,29 +701,110 @@ export function CommunityExperience({
           </div>
         </div>
 
-        {visiblePosts.map((post, index) => (
-          <article key={`${post.title}-${index}`} className="rounded-2xl border border-lf-line bg-white p-5 shadow-card">
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-              <div>
-                <p className="text-xs font-bold uppercase tracking-wide text-lf-orange">
-                  {post.pinned ? "Pinned coach post" : post.category}
-                </p>
-                <h2 className="h-display mt-3 text-xl">{post.title}</h2>
-                <p className="mt-1 text-sm font-semibold text-lf-slate">
-                  {post.author} · {post.role}
-                </p>
+        {visiblePosts.length === 0 && (
+          <div className="rounded-2xl border border-dashed border-lf-line bg-white p-8 text-center text-sm text-lf-slate">
+            No posts in this category yet. Be the first to share.
+          </div>
+        )}
+
+        {visiblePosts.map((post, index) => {
+          const postKey = `${post.title}-${index}`;
+          const youtubeId = extractYoutubeId(post.body);
+          const bodyText = stripYoutubeLinkLine(post.body);
+          return (
+            <article
+              key={postKey}
+              className={`rounded-2xl border bg-white shadow-card ${
+                post.pinned
+                  ? "border-lf-orange/60 ring-1 ring-lf-orange/30"
+                  : "border-lf-line"
+              }`}
+            >
+              <div className="flex flex-col gap-3 border-b border-lf-line p-5 sm:flex-row sm:items-start sm:justify-between">
+                <div>
+                  <p className="text-xs font-bold uppercase tracking-wide text-lf-orange">
+                    {post.pinned ? "Pinned coach post" : post.category}
+                  </p>
+                  <h2 className="h-display mt-3 text-2xl">{post.title}</h2>
+                  <p className="mt-1 text-sm font-semibold text-lf-slate">
+                    {post.author} · {post.role}
+                  </p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setOpenComments((current) => ({
+                        ...current,
+                        [postKey]: !(current[postKey] ?? true),
+                      }))
+                    }
+                    className="inline-flex items-center rounded-lg border border-lf-line bg-white px-3 py-1.5 text-xs font-semibold text-lf-navy transition hover:border-lf-navy hover:bg-lf-mist"
+                  >
+                    {post.comments.length} comments
+                  </button>
+                </div>
               </div>
-            </div>
-            <p className="prose-lf mt-4 text-lf-charcoal">{post.body}</p>
-            <div className="mt-5 grid gap-2">
-              {post.comments.map((comment) => (
-                <p key={comment} className="rounded-xl bg-lf-mist px-3 py-2 text-sm text-lf-slate">
-                  {comment}
-                </p>
-              ))}
-            </div>
-          </article>
-        ))}
+              {youtubeId && (
+                <div className="border-b border-lf-line bg-black">
+                  <div className="aspect-video w-full">
+                    <iframe
+                      className="h-full w-full"
+                      src={`https://www.youtube.com/embed/${youtubeId}`}
+                      title={`${post.title} video`}
+                      loading="lazy"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    />
+                  </div>
+                </div>
+              )}
+              <div className="p-5">
+                <p className="prose-lf whitespace-pre-line text-lf-charcoal">{bodyText}</p>
+                <div className="mt-5 grid gap-3">
+                  {(openComments[postKey] ?? true) && post.comments.length > 0 && (
+                    <div className="grid gap-2">
+                      {post.comments.map((comment) => (
+                        <p
+                          key={`${postKey}-${comment}`}
+                          className="rounded-xl bg-lf-mist px-3 py-2 text-sm text-lf-slate"
+                        >
+                          {comment}
+                        </p>
+                      ))}
+                    </div>
+                  )}
+                  {(openComments[postKey] ?? true) && (
+                    <div className="grid gap-2 sm:grid-cols-[1fr_auto] sm:items-end">
+                      <label className="grid gap-2 text-xs font-semibold uppercase tracking-wide text-lf-orange">
+                        Add a comment
+                        <input
+                          aria-label="Add a comment"
+                          value={commentDraft[postKey] ?? ""}
+                          onChange={(event) =>
+                            setCommentDraft((current) => ({
+                              ...current,
+                              [postKey]: event.target.value,
+                            }))
+                          }
+                          className="h-11 rounded-lg border border-lf-line px-3 text-sm font-normal text-lf-charcoal outline-none focus:border-lf-orange"
+                          placeholder="Short, specific, useful"
+                        />
+                      </label>
+                      <button
+                        type="button"
+                        onClick={() => addComment(postKey)}
+                        className="btn-secondary"
+                      >
+                        Post comment
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </article>
+          );
+        })}
       </main>
 
       <aside className="grid gap-5">
@@ -683,7 +846,25 @@ export function ScriptLibraryWorkspace({
   scripts: ScriptResource[];
 }) {
   const [copyState, setCopyState] = useState<Record<string, string>>({});
+  const [query, setQuery] = useState("");
+  const [activeCategory, setActiveCategory] = useState<string>("All");
+  const [openScript, setOpenScript] = useState<string | null>(null);
+
   const categories = Array.from(new Set(scripts.map((script) => script.category)));
+  const filtered = scripts.filter((script) => {
+    const q = query.trim().toLowerCase();
+    if (activeCategory !== "All" && script.category !== activeCategory) {
+      return false;
+    }
+    if (!q) return true;
+    return (
+      script.title.toLowerCase().includes(q) ||
+      script.category.toLowerCase().includes(q) ||
+      script.useWhen.toLowerCase().includes(q) ||
+      script.goal.toLowerCase().includes(q) ||
+      script.script.some((line) => line.toLowerCase().includes(q))
+    );
+  });
 
   async function copyScript(script: ScriptResource) {
     const text = [
@@ -706,53 +887,109 @@ export function ScriptLibraryWorkspace({
   }
 
   return (
-    <section className="grid gap-6">
-      {categories.map((category) => {
-        const categoryScripts = scripts.filter((script) => script.category === category);
-
-        return (
-          <div key={category}>
-            <p className="text-xs font-semibold uppercase tracking-wide text-lf-orange">{category}</p>
-            <div className="mt-3 grid gap-5 xl:grid-cols-2">
-              {categoryScripts.map((script) => (
-                <article key={script.title} className="rounded-2xl border border-lf-line bg-white p-5 shadow-card">
-                  <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
-                    <div>
-                      <h2 className="h-display text-2xl">{script.title}</h2>
-                      <div className="mt-4 grid gap-2 text-sm text-lf-charcoal">
-                        <p><strong className="text-lf-navy">Use when:</strong> {script.useWhen}</p>
-                        <p><strong className="text-lf-navy">Goal:</strong> {script.goal}</p>
-                      </div>
-                    </div>
-                    <button type="button" onClick={() => copyScript(script)} className="btn-primary shrink-0">
-                      {copyState[script.title] ?? "Copy script"}
-                    </button>
-                  </div>
-                  <div className="mt-4 grid gap-2 bg-lf-mist p-4 text-sm leading-6 text-lf-charcoal">
-                    {script.script.map((line) => (
-                      <p key={line}>{line}</p>
-                    ))}
-                  </div>
-                  <div className="mt-4 border-l-2 border-lf-orange pl-4">
-                    <p className="text-sm font-semibold text-lf-navy">Practice prompt</p>
-                    <p className="mt-1 text-sm leading-6 text-lf-slate">
-                      {script.practicePrompt ?? "Practice one clean rep and bring the stuck point to coaching."}
-                    </p>
-                  </div>
-                  {script.coachNote && (
-                    <p className="mt-4 text-sm leading-6 text-lf-slate">
-                      <strong className="text-lf-navy">Usage note:</strong> {script.coachNote}
-                    </p>
-                  )}
-                </article>
-              ))}
-            </div>
+    <div className="grid gap-5">
+      <div className="rounded-2xl border border-lf-line bg-white p-5 shadow-card">
+        <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_280px]">
+          <label className="grid gap-2 text-xs font-semibold uppercase tracking-wide text-lf-orange">
+            Search scripts
+            <input
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              placeholder="Title, situation, goal, or line"
+              className="h-11 rounded-lg border border-lf-line px-3 text-sm font-normal text-lf-charcoal outline-none focus:border-lf-orange"
+            />
+          </label>
+          <div className="rounded-xl bg-lf-navy p-4 text-white">
+            <p className="text-xs font-semibold uppercase tracking-wide text-lf-orange">Library</p>
+            <p className="mt-2 text-2xl font-black">{filtered.length}</p>
+            <p className="text-xs text-white/72">of {scripts.length} scripts shown</p>
           </div>
-        );
-      })}
-    </section>
+        </div>
+        <div className="mt-4 flex flex-wrap gap-2">
+          {["All", ...categories].map((category) => {
+            const isActive = activeCategory === category;
+            const count = category === "All"
+              ? scripts.length
+              : scripts.filter((s) => s.category === category).length;
+            return (
+              <button
+                key={category}
+                type="button"
+                onClick={() => setActiveCategory(category)}
+                className={`inline-flex items-center gap-2 rounded-lg border px-3 py-2 text-xs font-semibold transition ${
+                  isActive
+                    ? "border-lf-orange bg-lf-orange text-white"
+                    : "border-lf-line bg-white text-lf-navy hover:border-lf-navy hover:bg-lf-mist"
+                }`}
+              >
+                {category}
+                <span className={`rounded-full px-2 py-0.5 text-[10px] ${isActive ? "bg-white/20 text-white" : "bg-lf-mist text-lf-slate"}`}>{count}</span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {filtered.length === 0 && (
+        <div className="rounded-2xl border border-dashed border-lf-line bg-white p-8 text-center text-sm text-lf-slate">
+          No scripts match that search.
+        </div>
+      )}
+
+      <div className="grid gap-5 xl:grid-cols-2">
+        {filtered.map((script) => {
+          const isOpen = openScript === script.title;
+          return (
+            <article key={script.title} className="rounded-2xl border border-lf-line bg-white p-5 shadow-card">
+              <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-wide text-lf-orange">{script.category}</p>
+                  <h2 className="h-display mt-2 text-2xl">{script.title}</h2>
+                  <div className="mt-4 grid gap-2 text-sm text-lf-charcoal">
+                    <p><strong className="text-lf-navy">Use when:</strong> {script.useWhen}</p>
+                    <p><strong className="text-lf-navy">Goal:</strong> {script.goal}</p>
+                  </div>
+                </div>
+                <div className="flex flex-col gap-2">
+                  <button type="button" onClick={() => copyScript(script)} className="btn-primary shrink-0">
+                    {copyState[script.title] ?? "Copy script"}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setOpenScript(isOpen ? null : script.title)}
+                    className="btn-secondary shrink-0"
+                  >
+                    {isOpen ? "Hide script" : "Open script"}
+                  </button>
+                </div>
+              </div>
+              {isOpen && (
+                <div className="mt-4 grid gap-2 bg-lf-mist p-4 text-sm leading-6 text-lf-charcoal">
+                  {script.script.map((line) => (
+                    <p key={line}>{line}</p>
+                  ))}
+                </div>
+              )}
+              <div className="mt-4 border-l-2 border-lf-orange pl-4">
+                <p className="text-sm font-semibold text-lf-navy">Practice prompt</p>
+                <p className="mt-1 text-sm leading-6 text-lf-slate">
+                  {script.practicePrompt ?? "Practice one clean rep and bring the stuck point to coaching."}
+                </p>
+              </div>
+              {script.coachNote && (
+                <p className="mt-4 text-sm leading-6 text-lf-slate">
+                  <strong className="text-lf-navy">Usage note:</strong> {script.coachNote}
+                </p>
+              )}
+            </article>
+          );
+        })}
+      </div>
+    </div>
   );
 }
+
+
 
 export function PlaybookWorkspace({
   playbooks,
@@ -762,6 +999,22 @@ export function PlaybookWorkspace({
   const [completed, setCompleted] = useState<Record<string, boolean[]>>(() =>
     Object.fromEntries(playbooks.map((playbook) => [playbook.title, playbook.steps.map(() => false)])),
   );
+  const [query, setQuery] = useState("");
+  const [activeCategory, setActiveCategory] = useState<string>("All");
+  const [openPlaybook, setOpenPlaybook] = useState<string | null>(null);
+
+  const categories = Array.from(new Set(playbooks.map((p) => p.category)));
+  const filtered = playbooks.filter((p) => {
+    const q = query.trim().toLowerCase();
+    if (activeCategory !== "All" && p.category !== activeCategory) return false;
+    if (!q) return true;
+    return (
+      p.title.toLowerCase().includes(q) ||
+      p.category.toLowerCase().includes(q) ||
+      p.purpose.toLowerCase().includes(q) ||
+      p.steps.some((s) => s.toLowerCase().includes(q))
+    );
+  });
 
   function toggleStep(title: string, index: number) {
     setCompleted((current) => {
@@ -772,44 +1025,121 @@ export function PlaybookWorkspace({
   }
 
   return (
-    <section className="grid gap-5 xl:grid-cols-2">
-      {playbooks.map((playbook) => {
-        const steps = completed[playbook.title] ?? [];
-        const doneCount = steps.filter(Boolean).length;
+    <div className="grid gap-5">
+      <div className="rounded-2xl border border-lf-line bg-white p-5 shadow-card">
+        <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_280px]">
+          <label className="grid gap-2 text-xs font-semibold uppercase tracking-wide text-lf-orange">
+            Search playbooks
+            <input
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              placeholder="Title, category, step, or purpose"
+              className="h-11 rounded-lg border border-lf-line px-3 text-sm font-normal text-lf-charcoal outline-none focus:border-lf-orange"
+            />
+          </label>
+          <div className="rounded-xl bg-lf-navy p-4 text-white">
+            <p className="text-xs font-semibold uppercase tracking-wide text-lf-orange">Library</p>
+            <p className="mt-2 text-2xl font-black">{filtered.length}</p>
+            <p className="text-xs text-white/72">of {playbooks.length} playbooks shown</p>
+          </div>
+        </div>
+        <div className="mt-4 flex flex-wrap gap-2">
+          {["All", ...categories].map((category) => {
+            const isActive = activeCategory === category;
+            const count = category === "All"
+              ? playbooks.length
+              : playbooks.filter((p) => p.category === category).length;
+            return (
+              <button
+                key={category}
+                type="button"
+                onClick={() => setActiveCategory(category)}
+                className={`inline-flex items-center gap-2 rounded-lg border px-3 py-2 text-xs font-semibold transition ${
+                  isActive
+                    ? "border-lf-orange bg-lf-orange text-white"
+                    : "border-lf-line bg-white text-lf-navy hover:border-lf-navy hover:bg-lf-mist"
+                }`}
+              >
+                {category}
+                <span className={`rounded-full px-2 py-0.5 text-[10px] ${isActive ? "bg-white/20 text-white" : "bg-lf-mist text-lf-slate"}`}>{count}</span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
 
-        return (
-          <article key={playbook.title} className="rounded-2xl border border-lf-line bg-white p-5 shadow-card">
-            <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-wide text-lf-orange">{playbook.category}</p>
-                <h2 className="h-display mt-2 text-2xl">{playbook.title}</h2>
+      {filtered.length === 0 && (
+        <div className="rounded-2xl border border-dashed border-lf-line bg-white p-8 text-center text-sm text-lf-slate">
+          No playbooks match that search.
+        </div>
+      )}
+
+      <div className="grid gap-5 xl:grid-cols-2">
+        {filtered.map((playbook) => {
+          const steps = completed[playbook.title] ?? [];
+          const doneCount = steps.filter(Boolean).length;
+          const isOpen = openPlaybook === playbook.title;
+          return (
+            <article key={playbook.title} className="rounded-2xl border border-lf-line bg-white p-5 shadow-card">
+              <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-wide text-lf-orange">{playbook.category}</p>
+                  <h2 className="h-display mt-2 text-2xl">{playbook.title}</h2>
+                </div>
+                <p className="text-sm font-semibold text-lf-slate">{doneCount} of {playbook.steps.length} steps complete</p>
               </div>
-              <p className="text-sm font-semibold text-lf-slate">{doneCount} of {playbook.steps.length} steps complete</p>
-            </div>
-            <p className="prose-lf mt-3 text-sm text-lf-slate">{playbook.purpose}</p>
-            <div className="mt-5 grid gap-3">
-              {playbook.steps.map((step, index) => (
-                <label key={step} className="flex items-start gap-3 border-l-2 border-lf-orange bg-lf-mist p-3">
-                  <input
-                    type="checkbox"
-                    checked={steps[index] ?? false}
-                    onChange={() => toggleStep(playbook.title, index)}
-                    className="mt-1 h-4 w-4 accent-lf-orange"
-                  />
-                  <span className="text-sm leading-6 text-lf-charcoal">{step}</span>
-                </label>
-              ))}
-            </div>
-            <div className="mt-5 border-t border-lf-line pt-4">
-              <p className="text-sm font-semibold text-lf-navy">Practice prompt</p>
-              <p className="mt-1 text-sm leading-6 text-lf-slate">{playbook.practicePrompt}</p>
-            </div>
-          </article>
-        );
-      })}
-    </section>
+              <p className="prose-lf mt-3 text-sm text-lf-slate">{playbook.purpose}</p>
+              <div className="mt-4 flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  onClick={() => setOpenPlaybook(isOpen ? null : playbook.title)}
+                  className="btn-primary"
+                >
+                  {isOpen ? "Close" : "Open"}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setCompleted((current) => ({
+                      ...current,
+                      [playbook.title]: playbook.steps.map(() => false),
+                    }));
+                  }}
+                  className="btn-secondary"
+                >
+                  Reset
+                </button>
+              </div>
+              {isOpen && (
+                <>
+                  <div className="mt-5 grid gap-3">
+                    {playbook.steps.map((step, index) => (
+                      <label key={step} className="flex items-start gap-3 border-l-2 border-lf-orange bg-lf-mist p-3">
+                        <input
+                          type="checkbox"
+                          checked={steps[index] ?? false}
+                          onChange={() => toggleStep(playbook.title, index)}
+                          className="mt-1 h-4 w-4 accent-lf-orange"
+                        />
+                        <span className={`text-sm leading-6 text-lf-charcoal ${steps[index] ? "line-through text-lf-slate" : ""}`}>{step}</span>
+                      </label>
+                    ))}
+                  </div>
+                  <div className="mt-5 border-t border-lf-line pt-4">
+                    <p className="text-sm font-semibold text-lf-navy">Practice prompt</p>
+                    <p className="mt-1 text-sm leading-6 text-lf-slate">{playbook.practicePrompt}</p>
+                  </div>
+                </>
+              )}
+            </article>
+          );
+        })}
+      </div>
+    </div>
   );
 }
+
+
 
 export function CoachNotesWorkspace({
   notes,

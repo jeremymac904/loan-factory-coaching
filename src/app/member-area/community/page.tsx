@@ -2,6 +2,6 @@ import { CommunityFeedView } from "@/components/CoachingPlatformViews";
 
 export const metadata = { title: "Community" };
 
-export default function MemberAreaHome() {
+export default function MemberCommunityPage() {
   return <CommunityFeedView program="mastery" />;
 }
