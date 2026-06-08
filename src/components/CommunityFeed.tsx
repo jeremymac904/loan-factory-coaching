@@ -432,7 +432,17 @@ export default function CommunityFeed({ posts, leaderboard }: Props) {
 
         {visiblePosts.map((post, index) => {
           const key = makePostKey(post, index);
-          const ytId = post.videoUrl ? youtubeIdFromUrl(post.videoUrl) : null;
+          const bodyYoutubeId = (() => {
+            if (!post.body) return null;
+            const lines = post.body.split("\n");
+            for (const line of lines) {
+              if (line.startsWith("YouTube link:")) {
+                return youtubeIdFromUrl(line.replace("YouTube link:", "").trim());
+              }
+            }
+            return null;
+          })();
+          const ytId = post.videoUrl ? youtubeIdFromUrl(post.videoUrl) : bodyYoutubeId;
           return (
             <article
               key={key}
@@ -502,7 +512,14 @@ export default function CommunityFeed({ posts, leaderboard }: Props) {
               )}
 
               <div className="p-5">
-                <p className="prose-lf whitespace-pre-line text-lf-charcoal">{post.body}</p>
+                <p className="prose-lf whitespace-pre-line text-lf-charcoal">
+                  {post.body
+                    .split("\n")
+                    .filter((line) => !line.startsWith("YouTube link:"))
+                    .join("\n")
+                    .replace(/\n{3,}/g, "\n\n")
+                    .trim()}
+                </p>
 
                 {post.pollQuestion && post.pollOptions && (
                   <div className="mt-5 rounded-xl border border-lf-line bg-lf-mist p-4">

@@ -167,7 +167,7 @@ const memberRoutes: Record<string, { mastery: string; alliance: string }> = {
   Scripts: { mastery: "/member-area/scripts/", alliance: "/member-area/alliance-scripts/" },
   Playbooks: { mastery: "/member-area/playbooks/", alliance: "/member-area/alliance-playbooks/" },
   Classroom: { mastery: "/member-area/classroom/", alliance: "/member-area/alliance-classroom/" },
-  Community: { mastery: "/member-area/community/", alliance: "/member-area/community/" },
+  Community: { mastery: "/member-area/community/", alliance: "/member-area/alliance/community/" },
   Calendar: { mastery: "/member-area/calendar/", alliance: "/member-area/alliance-calendar/" },
   Resources: { mastery: "/member-area/resources/", alliance: "/member-area/alliance-resources/" },
   Profile: { mastery: "/member-area/profile/", alliance: "/member-area/alliance-profile/" },
@@ -484,9 +484,9 @@ export function CommunityFeedView({ program }: { program: ProgramKey }) {
           </p>
         </div>
       </section>
-      <div className="w-full bg-lf-mist px-5 py-8 md:px-10">
+      <MemberLayout program={program} active="Community">
         <CommunityFeed posts={posts} leaderboard={leaderboard} />
-      </div>
+      </MemberLayout>
     </>
   );
 }

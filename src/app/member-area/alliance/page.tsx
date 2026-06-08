@@ -1,7 +1,7 @@
-import { CommunityFeedView } from "@/components/CoachingPlatformViews";
+import MemberDashboard from "@/components/MemberDashboard";
 
-export const metadata = { title: "Alliance Community" };
+export const metadata = { title: "Alliance Dashboard" };
 
 export default function AllianceMemberAreaHome() {
-  return <CommunityFeedView program="alliance" />;
+  return <MemberDashboard program="alliance" />;
 }
