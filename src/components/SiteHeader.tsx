@@ -4,21 +4,23 @@ import HeaderAuthStatus from "./HeaderAuthStatus";
 import { brandAssets } from "@/data/brandAssets";
 
 const primaryNav = [
-  { label: "Home", href: "/" },
-  { label: "LO Mastery", href: "/lo-mastery-coaching/" },
-  { label: "Alliance", href: "/loan-factory-alliance/" },
-  { label: "Member Area", href: "/member-area/" },
+  { label: "AI Advantage", href: "/ai-advantage/" },
+  { label: "Sales", href: "/sales/" },
+  { label: "Resources", href: "/resources/" },
+  { label: "Replays", href: "/replays/" },
+  { label: "AI Assistant", href: "/ai-assistant/" },
+  { label: "Community", href: "/community/" },
 ];
 
 export default function SiteHeader() {
   return (
     <header className="sticky top-0 z-30 border-b border-lf-line bg-white/95 backdrop-blur">
-      <div className="mx-auto flex min-h-20 w-full max-w-[1500px] items-center justify-between gap-4 px-5 py-3 sm:px-8 lg:grid lg:grid-cols-[260px_minmax(0,1fr)_260px]">
+      <div className="mx-auto flex min-h-20 w-full max-w-[1500px] items-center justify-between gap-4 px-5 py-3 sm:px-8 lg:grid lg:grid-cols-[260px_minmax(0,1fr)_220px]">
         <div className="flex min-w-0 flex-1 items-center justify-between gap-4 lg:flex-none lg:justify-start">
           <Link
             href="/"
             className="flex min-w-0 items-center"
-            aria-label="Loan Factory paid coaching home"
+            aria-label="Loan Factory AI Advantage home"
           >
             <BrandImage
               asset={brandAssets["loan-factory"]}
@@ -48,7 +50,7 @@ export default function SiteHeader() {
         </div>
 
         <nav
-          className="hidden min-w-0 items-center justify-center gap-2 lg:flex"
+          className="hidden min-w-0 items-center justify-center gap-1 lg:flex"
           aria-label="Primary navigation"
         >
           {primaryNav.map((item) => (

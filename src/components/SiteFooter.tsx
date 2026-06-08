@@ -3,12 +3,14 @@ import BrandImage from "./BrandImage";
 import { brandAssets } from "@/data/brandAssets";
 
 const footerLinks = [
-  { href: "/", label: "Home" },
-  { href: "/lo-mastery-coaching/", label: "LO Mastery" },
-  { href: "/loan-factory-alliance/", label: "Loan Factory Alliance" },
-  { href: "/member-area/", label: "Member Area" },
-  { href: "/coach-command-center/", label: "Coach Command Center" },
-  { href: "/manager-dashboard/", label: "Manager Dashboard" },
+  { href: "/ai-advantage/", label: "AI Advantage" },
+  { href: "/sales/", label: "Elite Sales & Marketing" },
+  { href: "/resources/", label: "Resource Library" },
+  { href: "/replays/", label: "Replay Library" },
+  { href: "/ai-assistant/", label: "AI Assistant" },
+  { href: "/community/", label: "Community" },
+  { href: "/progress/", label: "Your Progress" },
+  { href: "/onboarding/welcome/", label: "Onboarding" },
 ];
 
 export default function SiteFooter() {
@@ -22,17 +24,20 @@ export default function SiteFooter() {
               heightClass="h-9"
             />
             <p className="mt-5 max-w-xl text-sm leading-6 text-white/70">
-              Paid coaching for Loan Factory loan officers who want structure,
-              weekly accountability, daily execution, and better follow-through.
+              Internal training portal for Loan Factory loan officers. Two
+              academies — AI Advantage and Elite Sales &amp; Marketing —
+              plus the resource library, replay library, AI assistant, and
+              community that support them.
             </p>
           </div>
           <div className="grid gap-3 sm:grid-cols-2">
             <div className="rounded-xl border border-white/10 bg-white/[0.04] p-4">
               <p className="text-xs font-semibold uppercase tracking-wide text-lf-orange">
-                Programs
+                Academies
               </p>
               <p className="mt-2 text-sm text-white/72">
-                LO Mastery and Loan Factory Alliance.
+                AI Advantage (101–601) and Elite Sales &amp; Marketing (101–601).
+                Classes alternate every other week.
               </p>
             </div>
             <div className="rounded-xl border border-white/10 bg-white/[0.04] p-4">
@@ -40,7 +45,8 @@ export default function SiteFooter() {
                 Operating rhythm
               </p>
               <p className="mt-2 text-sm text-white/72">
-                Coaching, scorecards, trackers, scripts, and community.
+                Replays, resources, AI assistant, and community — all built
+                around the work loan officers actually do.
               </p>
             </div>
           </div>
@@ -49,10 +55,10 @@ export default function SiteFooter() {
         <div className="mt-8 grid gap-8 lg:grid-cols-[0.9fr_1.4fr]">
           <div>
             <p className="text-sm font-semibold text-white">
-              Loan Factory Paid Coaching Platform
+              Loan Factory AI Advantage Platform
             </p>
             <p className="mt-2 text-sm leading-6 text-white/64">
-              Simple structure. Clear accountability. Better weekly execution.
+              Two academies. Six pillars. Built for LOs.
             </p>
           </div>
           <div className="grid gap-x-6 gap-y-3 text-sm sm:grid-cols-2">
@@ -69,7 +75,7 @@ export default function SiteFooter() {
         </div>
         <div className="mt-10 flex flex-col gap-4 border-t border-white/10 pt-5 text-sm text-white/55 md:flex-row md:items-center md:justify-between">
           <p>
-            Internal coaching platform review build.
+            Internal use only. Not for external distribution. Not borrower-facing.
           </p>
           <p>
             Jeremy McDonald ·{" "}

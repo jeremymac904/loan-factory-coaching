@@ -7,11 +7,11 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: {
-    default: "Loan Factory Paid Coaching Platform",
-    template: "%s | Loan Factory Paid Coaching",
+    default: "Loan Factory AI Advantage Platform",
+    template: "%s | Loan Factory AI Advantage",
   },
   description:
-    "Loan Factory paid coaching platform for LO Mastery, Loan Factory Alliance, weekly coaching, daily execution, scorecards, trackers, script books, theme days, and community.",
+    "Internal training portal for Loan Factory loan officers. Two academies (AI Advantage 101-601 and Elite Sales & Marketing 101-601) plus the resource library, replay library, AI assistant, and community that support them.",
   manifest: "/manifest.webmanifest",
   robots: { index: false, follow: false },
   icons: {

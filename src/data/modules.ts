@@ -19,6 +19,7 @@ export type ModuleSummary = {
     embedUrl: string;
     description: string;
   };
+  handoutHref?: string;
   topics: string[];
   assignment: string[];
   trackerMetrics: string[];
@@ -83,6 +84,7 @@ export const modules: ModuleSummary[] = [
       description:
         "Watch this training first, then use the scripts, prompts, roleplays, and tracker resources below to complete the 101 Foundation lesson.",
     },
+    handoutHref: "/downloads/101-foundation-handout.md",
     topics: [
       "Broker model positioning in plain English",
       "Why Loan Factory wins versus banks and retail lenders, without bashing competitors",
@@ -133,7 +135,15 @@ export const modules: ModuleSummary[] = [
     corePromise:
       "You turn more first conversations into clear next steps and completed applications.",
     audience: "Any LO with at least 30 days of LO experience.",
-    status: "summary",
+    status: "full",
+    trainingVideo: {
+      title: "201 Borrower Conversion — First Call Deep Dive",
+      youtubeUrl: "https://youtu.be/fdqe2poMc98",
+      embedUrl: "https://www.youtube.com/embed/fdqe2poMc98",
+      description:
+        "Jeremy walks through a first-call example from start to finish, then explains how to score it.",
+    },
+    handoutHref: "/downloads/201-borrower-conversion-handout.md",
     levels: ["Intermediate"],
     doThisToday: [
       "Run one first call using the High Trust Intake.",
