@@ -45,7 +45,7 @@ export default async function SalesModulePage({
       handoutHref={mod.handoutHref}
       handoutTitle={`${mod.level} handout`}
       handoutDescription="One page you can print, keep on your desk, and review before any call."
-      handoutFormat="MD"
+      handoutFormat="DOCX"
       audioSlug={audioSlug}
       audioEntry={audioEntry}
       extraCompliance={

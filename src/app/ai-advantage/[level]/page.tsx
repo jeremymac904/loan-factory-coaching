@@ -71,7 +71,7 @@ export default async function AiAdvantageModulePage({
       handoutHref={mod.handoutHref}
       handoutTitle={`${mod.level} handout`}
       handoutDescription="One page you can print, keep on your desk, and review before any AI-assisted task."
-      handoutFormat="MD"
+      handoutFormat="DOCX"
       backHref="/ai-advantage/"
       backLabel="AI Academy"
     >

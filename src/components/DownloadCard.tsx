@@ -1,6 +1,6 @@
 type Props = {
   title: string;
-  format?: string;
+  format?: "MD" | "PDF" | "Word" | "PPTX" | "DOCX";
   description?: string;
   /** When provided, the card becomes a real download button. */
   downloadHref?: string;

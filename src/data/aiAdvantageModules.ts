@@ -86,7 +86,7 @@ export const aiAdvantageModules: AiAdvantageModule[] = [
     ],
     behaviorChange:
       "LO has a working AI Twin and a clear list of what to never paste into it.",
-    handoutHref: "/downloads/ai-advantage/101-foundations-handout.md",
+    handoutHref: "/downloads/ai-advantage/101-foundations-handout.docx",
   },
   {
     level: "201",
@@ -95,7 +95,7 @@ export const aiAdvantageModules: AiAdvantageModule[] = [
     title: "201 Twin Setup: Connect Your Sources and Your Voice",
     theme: "AI Twin personalization",
     corePromise:
-      "Future module. Connect your AI Twin to your scripts, past client list, and bio doc so drafts sound like you.",
+      "Connect your AI Twin to your scripts, past client list, and bio doc so drafts sound like you.",
     audience:
       "LO with a working Gemini Gem, ready to personalize it with their own content.",
     status: "summary",
@@ -117,7 +117,8 @@ export const aiAdvantageModules: AiAdvantageModule[] = [
     teamLeaderNotes: [],
     complianceWatchOuts: [],
     behaviorChange:
-      "Pending — module is in the future curriculum, not yet produced.",
+      "Behavior change pending — module content not yet produced.",
+    handoutHref: "/downloads/ai-advantage/201-twin-setup-handout.docx",
   },
   {
     level: "301",
@@ -126,7 +127,7 @@ export const aiAdvantageModules: AiAdvantageModule[] = [
     title: "301 Client Communication: First Touches in Under 60 Seconds",
     theme: "AI for borrower and partner messaging",
     corePromise:
-      "Future module. Use your AI Twin to draft every first-touch message in under 60 seconds.",
+      "Use your AI Twin to draft every first-touch message in under 60 seconds.",
     audience:
       "LO with a personalized Twin, ready to put it in the daily communication loop.",
     status: "summary",
@@ -148,7 +149,8 @@ export const aiAdvantageModules: AiAdvantageModule[] = [
     teamLeaderNotes: [],
     complianceWatchOuts: [],
     behaviorChange:
-      "Pending — module is in the future curriculum, not yet produced.",
+      "Behavior change pending — module content not yet produced.",
+    handoutHref: "/downloads/ai-advantage/301-client-communication-handout.docx",
   },
   {
     level: "401",
@@ -157,7 +159,7 @@ export const aiAdvantageModules: AiAdvantageModule[] = [
     title: "401 Marketing and Content: Publish 3 Pieces a Week, Compliance Checked",
     theme: "AI for marketing and content",
     corePromise:
-      "Future module. Publish 3 pieces of content a week, AI assisted, compliance checked.",
+      "Publish 3 pieces of content a week, AI assisted, compliance checked.",
     audience: "LO ready to be visible in their market.",
     status: "summary",
     levels: ["Intermediate", "Advanced"],
@@ -178,7 +180,8 @@ export const aiAdvantageModules: AiAdvantageModule[] = [
     teamLeaderNotes: [],
     complianceWatchOuts: [],
     behaviorChange:
-      "Pending — module is in the future curriculum, not yet produced.",
+      "Behavior change pending — module content not yet produced.",
+    handoutHref: "/downloads/ai-advantage/401-marketing-content-handout.docx",
   },
   {
     level: "501",
@@ -187,7 +190,7 @@ export const aiAdvantageModules: AiAdvantageModule[] = [
     title: "501 Apps and Automation: Connect 2 Tools, Stop Losing Deals to Mess",
     theme: "AI tools and automation",
     corePromise:
-      "Future module. Connect 2 AI tools to your pipeline and stop losing deals to mess.",
+      "Connect 2 AI tools to your pipeline and stop losing deals to mess.",
     audience: "Producer or experienced LO with a steady borrower process.",
     status: "summary",
     levels: ["Intermediate", "Advanced"],
@@ -207,7 +210,8 @@ export const aiAdvantageModules: AiAdvantageModule[] = [
     teamLeaderNotes: [],
     complianceWatchOuts: [],
     behaviorChange:
-      "Pending — module is in the future curriculum, not yet produced.",
+      "Behavior change pending — module content not yet produced.",
+    handoutHref: "/downloads/ai-advantage/501-apps-automation-handout.docx",
   },
   {
     level: "601",
@@ -216,7 +220,7 @@ export const aiAdvantageModules: AiAdvantageModule[] = [
     title: "601 Elite Execution: Your 12 Week AI Plan",
     theme: "AI elite execution and 12 week plan",
     corePromise:
-      "Future module. Graduate with a written AI workflow and a measurable 12 week plan.",
+      "Graduate with a written AI workflow and a measurable 12 week plan.",
     audience: "Producer, team leader, or corporate coach.",
     status: "summary",
     levels: ["Advanced"],
@@ -235,7 +239,8 @@ export const aiAdvantageModules: AiAdvantageModule[] = [
     teamLeaderNotes: [],
     complianceWatchOuts: [],
     behaviorChange:
-      "Pending — module is in the future curriculum, not yet produced.",
+      "Behavior change pending — module content not yet produced.",
+    handoutHref: "/downloads/ai-advantage/601-elite-execution-handout.docx",
   },
 ];
 
