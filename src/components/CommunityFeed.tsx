@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import Link from "next/link";
 import type { CommunityPost } from "@/data/coachingPlatform";
 
 type LeaderRow = { name: string; detail: string; metric: string };
@@ -20,7 +21,26 @@ type LocalPost = CommunityPost & {
 type Props = {
   posts: CommunityPost[];
   leaderboard: LeaderRow[];
+  storageKey?: string;
+  program?: "mastery" | "alliance";
 };
+
+type FeedStore = {
+  posts: LocalPost[];
+  votes: Record<string, string>;
+};
+
+function readFeedStore(storageKey: string): FeedStore | null {
+  if (typeof window === "undefined") return null;
+  const saved = window.localStorage.getItem(storageKey);
+  if (!saved) return null;
+  try {
+    return JSON.parse(saved) as FeedStore;
+  } catch {
+    window.localStorage.removeItem(storageKey);
+    return null;
+  }
+}
 
 function youtubeIdFromUrl(rawUrl: string) {
   if (!rawUrl) return null;
@@ -51,9 +71,15 @@ function makePostKey(post: LocalPost, index: number) {
   return `${post.title}-${index}`;
 }
 
-export default function CommunityFeed({ posts, leaderboard }: Props) {
+export default function CommunityFeed({
+  posts,
+  leaderboard,
+  storageKey = "lf-feed-mastery",
+  program = "mastery",
+}: Props) {
   const [activeCategory, setActiveCategory] = useState<Category>("All");
   const [localPosts, setLocalPosts] = useState<LocalPost[]>(posts);
+  const [hydrated, setHydrated] = useState(false);
   const [composerTitle, setComposerTitle] = useState("");
   const [composerCategory, setComposerCategory] = useState<Exclude<Category, "All">>("Questions");
   const [composerBody, setComposerBody] = useState("");
@@ -71,6 +97,33 @@ export default function CommunityFeed({ posts, leaderboard }: Props) {
   const [voteState, setVoteState] = useState<Record<string, string>>({});
   const imageInputRef = useRef<HTMLInputElement | null>(null);
   const videoInputRef = useRef<HTMLInputElement | null>(null);
+
+  useEffect(() => {
+    const saved = readFeedStore(storageKey);
+    if (saved) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- restore browser-only saved state after hydration to avoid SSR/client mismatches.
+      setLocalPosts(saved.posts);
+      setVoteState(saved.votes);
+    }
+    setHydrated(true);
+  }, [storageKey]);
+
+  useEffect(() => {
+    if (!hydrated) return;
+    try {
+      window.localStorage.setItem(
+        storageKey,
+        JSON.stringify({ posts: localPosts, votes: voteState }),
+      );
+    } catch {
+      // Media-heavy posts can exceed the local storage quota; keep the feed working in memory.
+    }
+  }, [hydrated, localPosts, storageKey, voteState]);
+
+  const memberLinks =
+    program === "alliance"
+      ? { scorecard: "/member-area/alliance-scorecard/", calendar: "/member-area/alliance-calendar/", today: "/member-area/alliance-today/" }
+      : { scorecard: "/member-area/scorecards/", calendar: "/member-area/calendar/", today: "/member-area/today/" };
 
   const visiblePosts = useMemo(() => {
     return localPosts.filter((post) => {
@@ -642,18 +695,21 @@ export default function CommunityFeed({ posts, leaderboard }: Props) {
 
       <aside className="grid gap-5 self-start">
         <div className="rounded-2xl border border-lf-line bg-white p-5 shadow-card">
-          <p className="text-xs font-semibold uppercase tracking-wide text-lf-orange">Community</p>
-          <h2 className="h-display mt-2 text-xl">Activity</h2>
-          <div className="mt-4 grid gap-3 text-sm text-lf-charcoal">
-            <div className="rounded-xl bg-lf-mist p-3">
-              <p className="text-xs font-semibold uppercase tracking-wide text-lf-orange">Pinned posts</p>
-              <p className="mt-1 text-2xl font-black text-lf-navy">{pinnedCount}</p>
-            </div>
-            <div className="rounded-xl bg-lf-mist p-3">
-              <p className="text-xs font-semibold uppercase tracking-wide text-lf-orange">Members posting</p>
-              <p className="mt-1 text-2xl font-black text-lf-navy">{totalMembers}</p>
-            </div>
+          <p className="text-xs font-semibold uppercase tracking-wide text-lf-orange">This week</p>
+          <div className="mt-4 grid gap-3">
+            <Link href={memberLinks.today} className="btn-primary">
+              Open Today
+            </Link>
+            <Link href={memberLinks.scorecard} className="btn-secondary">
+              Scorecard due Friday
+            </Link>
+            <Link href={memberLinks.calendar} className="btn-secondary">
+              Upcoming coaching call
+            </Link>
           </div>
+          <p className="mt-4 text-sm text-lf-slate">
+            {pinnedCount} pinned · {totalMembers} members posting
+          </p>
         </div>
 
         <div className="rounded-2xl border border-lf-line bg-white p-5 shadow-card">

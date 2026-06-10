@@ -8,7 +8,6 @@ const footerLinks = [
   { href: "/loan-factory-alliance/", label: "Loan Factory Alliance" },
   { href: "/apply/", label: "Apply" },
   { href: "/member-area/", label: "Member Area" },
-  { href: "/coach-command-center/", label: "Coach Command Center" },
 ];
 
 export default function SiteFooter() {

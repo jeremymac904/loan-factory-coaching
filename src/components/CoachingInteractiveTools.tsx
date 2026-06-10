@@ -812,13 +812,13 @@ export function CommunityExperience({
           <p className="text-xs font-semibold uppercase tracking-wide text-lf-orange">
             Member sidebar
           </p>
-          <div className="mt-4 grid gap-3">
+          <ul className="mt-4 grid gap-2">
             {["Scorecard due Friday", "Partner thread Wednesday", "Script practice open", "Coach notes ready"].map((item) => (
-              <div key={item} className="rounded-xl bg-lf-mist p-3 text-sm font-semibold text-lf-charcoal">
+              <li key={item} className="border-l-2 border-lf-line pl-3 text-sm font-semibold text-lf-charcoal">
                 {item}
-              </div>
+              </li>
             ))}
-          </div>
+          </ul>
         </div>
         <div className="rounded-2xl border border-lf-line bg-white p-4 shadow-card">
           <p className="text-xs font-semibold uppercase tracking-wide text-lf-orange">

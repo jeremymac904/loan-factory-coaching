@@ -38,6 +38,7 @@ import {
 } from "./CoachingInteractiveTools";
 import CommunityFeed from "./CommunityFeed";
 import ClassroomClient from "./ClassroomClient";
+import TodayWorkspace from "./TodayWorkspace";
 
 function PageHero({
   eyebrow,
@@ -161,21 +162,21 @@ function programLeaderboard(program: ProgramKey) {
 }
 
 const memberRoutes: Record<string, { mastery: string; alliance: string }> = {
-  Dashboard: { mastery: "/member-area/", alliance: "/member-area/alliance/" },
+  Feed: { mastery: "/member-area/", alliance: "/member-area/alliance/" },
+  Today: { mastery: "/member-area/today/", alliance: "/member-area/alliance-today/" },
   Scorecard: { mastery: "/member-area/scorecards/", alliance: "/member-area/alliance-scorecard/" },
   Trackers: { mastery: "/member-area/trackers/", alliance: "/member-area/alliance-trackers/" },
   Scripts: { mastery: "/member-area/scripts/", alliance: "/member-area/alliance-scripts/" },
   Playbooks: { mastery: "/member-area/playbooks/", alliance: "/member-area/alliance-playbooks/" },
   Classroom: { mastery: "/member-area/classroom/", alliance: "/member-area/alliance-classroom/" },
-  Community: { mastery: "/member-area/community/", alliance: "/member-area/alliance/community/" },
   Calendar: { mastery: "/member-area/calendar/", alliance: "/member-area/alliance-calendar/" },
   Resources: { mastery: "/member-area/resources/", alliance: "/member-area/alliance-resources/" },
   Profile: { mastery: "/member-area/profile/", alliance: "/member-area/alliance-profile/" },
 };
 
 const memberNavItems = [
-  "Dashboard",
-  "Community",
+  "Feed",
+  "Today",
   "Scorecard",
   "Trackers",
   "Scripts",
@@ -214,15 +215,27 @@ function MemberSidebar({ program, active }: { program: ProgramKey; active: strin
           );
         })}
       </nav>
-      <div className="border-t border-lf-line p-5">
-        <Link
-          href="/coach-command-center/"
-          className="text-sm font-semibold text-lf-orange hover:text-lf-orangeDark"
-        >
-          Coach Command Center
-        </Link>
-      </div>
     </aside>
+  );
+}
+
+function MemberHead({
+  program,
+  title,
+  description,
+}: {
+  program: ProgramKey;
+  title: string;
+  description: string;
+}) {
+  return (
+    <div className="mb-6 border-b border-lf-line pb-5">
+      <p className="text-xs font-semibold uppercase tracking-wide text-lf-orange">
+        {programName(program)}
+      </p>
+      <h1 className="h-display mt-1 text-3xl">{title}</h1>
+      <p className="prose-lf mt-2 max-w-3xl text-sm text-lf-slate">{description}</p>
+    </div>
   );
 }
 
@@ -250,131 +263,147 @@ export function ScorecardWorkspace({ program }: { program: ProgramKey }) {
   const isMastery = program === "mastery";
   const metrics = isMastery ? scorecardMetrics : allianceScorecardMetrics;
   return (
-    <>
-      <PageHero
-        eyebrow={`${programName(program)} scorecard`}
-        title="Weekly scorecard."
+    <MemberLayout program={program} active="Scorecard">
+      <MemberHead
+        program={program}
+        title="Weekly scorecard"
         description={isMastery
-          ? "Daily activity, Realtor relationships, follow-up, applications, and weekly reflection for LO Mastery."
-          : "Advanced activity, partner strategy, pipeline movement, systems bottlenecks, and weekly coach review for Alliance."}
+          ? "Fill daily, save the draft, and submit the week to your coach on Friday."
+          : "Advanced activity, partner strategy, pipeline movement, and weekly coach review for Alliance."}
       />
-      <MemberLayout program={program} active="Scorecard">
-        <WeeklyScorecardForm
-          metrics={metrics}
-          title={`${programName(program)} Weekly Scorecard`}
-          programLabel={programName(program)}
-        />
-      </MemberLayout>
-    </>
+      <WeeklyScorecardForm
+        metrics={metrics}
+        title={`${programName(program)} Weekly Scorecard`}
+        programLabel={programName(program)}
+      />
+    </MemberLayout>
+  );
+}
+
+export function TodayView({ program }: { program: ProgramKey }) {
+  const note = coachNotes[0];
+  return (
+    <MemberLayout program={program} active="Today">
+      <MemberHead
+        program={program}
+        title="Today"
+        description="Open the page, see what today is, do the work, and log it before the day ends."
+      />
+      <TodayWorkspace
+        program={program}
+        coachNote={`${note.note} Next action: ${note.nextAction}`}
+      />
+    </MemberLayout>
   );
 }
 
 export function TrackerWorkspaceView({ program }: { program: ProgramKey }) {
   return (
-    <>
-      <PageHero
-        eyebrow={`${programName(program)} trackers`}
-        title="Execution trackers."
+    <MemberLayout program={program} active="Trackers">
+      <MemberHead
+        program={program}
+        title="Trackers"
         description="Real editable trackers with local save, summary, and coach review readiness."
       />
-      <MemberLayout program={program} active="Trackers">
-        <TrackerWorkspace trackers={programTrackerSet(program)} />
-      </MemberLayout>
-    </>
+      <TrackerWorkspace trackers={programTrackerSet(program)} />
+    </MemberLayout>
   );
 }
 
 export function ScriptsLibrary({ program }: { program: ProgramKey }) {
   return (
-    <>
-      <PageHero
-        eyebrow={`${programName(program)} scripts`}
-        title="Script library."
+    <MemberLayout program={program} active="Scripts">
+      <MemberHead
+        program={program}
+        title="Scripts"
         description="Search, filter, and copy scripts. Each script includes a use-when note, a goal, and a practice prompt."
       />
-      <MemberLayout program={program} active="Scripts">
-        <ScriptLibraryWorkspace scripts={programScripts(program)} />
-      </MemberLayout>
-    </>
+      <ScriptLibraryWorkspace scripts={programScripts(program)} />
+    </MemberLayout>
   );
 }
 
 export function PlaybooksLibrary({ program }: { program: ProgramKey }) {
   return (
-    <>
-      <PageHero
-        eyebrow={`${programName(program)} playbooks`}
-        title="Playbooks."
+    <MemberLayout program={program} active="Playbooks">
+      <MemberHead
+        program={program}
+        title="Playbooks"
         description="Step-by-step execution playbooks. Open one, work it, and mark steps complete as you go."
       />
-      <MemberLayout program={program} active="Playbooks">
-        <PlaybookWorkspace playbooks={programPlaybooks(program)} />
-      </MemberLayout>
-    </>
+      <PlaybookWorkspace playbooks={programPlaybooks(program)} />
+    </MemberLayout>
   );
 }
 
 export function ClassroomView({ program }: { program: ProgramKey }) {
   return (
-    <>
-      <PageHero
-        eyebrow={`${programName(program)} classroom`}
-        title="Classroom."
+    <MemberLayout program={program} active="Classroom">
+      <MemberHead
+        program={program}
+        title="Classroom"
         description="Twelve weekly modules with lessons, assignments, tracked numbers, and win conditions."
       />
-      <MemberLayout program={program} active="Classroom">
-        <ClassroomClient weeks={programWeeks(program)} program={program} storageKey={`lf-classroom-${program}-progress`} />
-      </MemberLayout>
-    </>
+      <ClassroomClient weeks={programWeeks(program)} program={program} storageKey={`lf-classroom-${program}-progress`} />
+    </MemberLayout>
   );
 }
 
 export function CalendarView({ program }: { program: ProgramKey }) {
   return (
-    <>
-      <PageHero
-        eyebrow={`${programName(program)} calendar`}
-        title="Weekly calendar."
+    <MemberLayout program={program} active="Calendar">
+      <MemberHead
+        program={program}
+        title="Calendar"
         description="Calls, planning windows, review sessions, and the daily theme-day rhythm."
       />
-      <MemberLayout program={program} active="Calendar">
-        <CalendarBoard program={program} />
-      </MemberLayout>
-    </>
+      <CalendarBoard program={program} />
+    </MemberLayout>
   );
 }
 
 export function ResourcesLibrary({ program }: { program: ProgramKey }) {
   const resources = programResources(program);
+  const categories = Array.from(new Set(resources.map((r) => r.category)));
   return (
-    <>
-      <PageHero
-        eyebrow={`${programName(program)} resources`}
-        title="Resource library."
-        description="Source Drive folder plus program-filtered PDFs and DOCX files."
-        actions={[{ href: driveFolderUrl, label: "Open source Drive folder" }]}
+    <MemberLayout program={program} active="Resources">
+      <MemberHead
+        program={program}
+        title="Resources"
+        description="Drive-linked files organized by category. Open or download what today needs."
       />
-      <MemberLayout program={program} active="Resources">
-        <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-          {resources.map((r) => (
-            <ResourceCard key={r.title} resource={r} />
-          ))}
-        </div>
-      </MemberLayout>
-    </>
+      <div className="mb-6">
+        <a href={driveFolderUrl} target="_blank" rel="noreferrer" className="btn-secondary">
+          Open source Drive folder
+        </a>
+      </div>
+      <div className="grid gap-8">
+        {categories.map((category) => (
+          <section key={category}>
+            <h2 className="h-display text-xl">{category}</h2>
+            <div className="mt-3 overflow-hidden rounded-2xl border border-lf-line bg-white shadow-card">
+              {resources
+                .filter((r) => r.category === category)
+                .map((r) => (
+                  <ResourceRow key={r.title} resource={r} />
+                ))}
+            </div>
+          </section>
+        ))}
+      </div>
+    </MemberLayout>
   );
 }
 
 export function ProfileView({ program }: { program: ProgramKey }) {
   const isMastery = program === "mastery";
   return (
-    <>
-      <PageHero
-        eyebrow={`${programName(program)} profile`}
-        title="Profile."
+    <MemberLayout program={program} active="Profile">
+      <MemberHead
+        program={program}
+        title="Profile"
         description="Member goals, current focus, coaching alignment, and account access."
       />
-      <MemberLayout program={program} active="Profile">
         <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_330px]">
           <section className="rounded-2xl border border-lf-line bg-white p-6 shadow-card">
             <SectionTitle label="Member plan" title="Current 12-week goal" />
@@ -402,20 +431,18 @@ export function ProfileView({ program }: { program: ProgramKey }) {
             </Link>
           </aside>
         </div>
-      </MemberLayout>
-    </>
+    </MemberLayout>
   );
 }
 
-function ResourceCard({ resource }: { resource: DownloadResource }) {
+function ResourceRow({ resource }: { resource: DownloadResource }) {
   return (
-    <article className="flex min-h-[230px] flex-col rounded-2xl border border-lf-line bg-white p-5 shadow-card">
-      <p className="text-xs font-semibold uppercase tracking-wide text-lf-orange">
-        {resource.category}
-      </p>
-      <h3 className="h-display mt-3 text-xl">{resource.title}</h3>
-      <p className="prose-lf mt-2 text-sm text-lf-slate">{resource.description}</p>
-      <div className="mt-auto flex flex-wrap gap-2 pt-5">
+    <div className="flex flex-col gap-3 border-b border-lf-line p-4 last:border-b-0 sm:flex-row sm:items-center sm:justify-between">
+      <div className="min-w-0">
+        <p className="text-sm font-bold text-lf-navy">{resource.title}</p>
+        <p className="mt-1 text-sm text-lf-slate">{resource.description}</p>
+      </div>
+      <div className="flex shrink-0 flex-wrap gap-2">
         {resource.pdf && (
           <a href={resource.pdf} target="_blank" rel="noreferrer" className="btn-primary">
             Open PDF
@@ -426,8 +453,13 @@ function ResourceCard({ resource }: { resource: DownloadResource }) {
             Open DOCX
           </a>
         )}
+        {!resource.pdf && !resource.docx && (
+          <span className="text-xs font-semibold uppercase tracking-wide text-lf-slate">
+            Link pending
+          </span>
+        )}
       </div>
-    </article>
+    </div>
   );
 }
 
@@ -464,30 +496,14 @@ export function CommunityFeedView({ program }: { program: ProgramKey }) {
   const posts = programCommunityPosts(program);
   const leaderboard = programLeaderboard(program);
   return (
-    <>
-      <section className="relative isolate overflow-hidden bg-lf-navy text-white">
-        <div
-          aria-hidden
-          className="absolute inset-0 bg-cover bg-center"
-          style={{ backgroundImage: "url(/media/dark-hero-background.png)" }}
-        />
-        <div aria-hidden className="absolute inset-0 bg-black/72" />
-        <div className="relative w-full px-5 py-10 md:px-10 md:py-12">
-          <p className="text-xs font-bold uppercase tracking-wide text-lf-orange">
-            {programName(program)} community
-          </p>
-          <h1 className="metal-title-dark mt-4 text-4xl md:text-5xl">
-            Member feed.
-          </h1>
-          <p className="mt-4 max-w-3xl text-lg leading-8 text-white/84">
-            Posts, comments, pinned coach notes, scripts, and wins. The community is the homepage.
-          </p>
-        </div>
-      </section>
-      <MemberLayout program={program} active="Community">
-        <CommunityFeed posts={posts} leaderboard={leaderboard} />
-      </MemberLayout>
-    </>
+    <MemberLayout program={program} active="Feed">
+      <MemberHead
+        program={program}
+        title="Member feed"
+        description="Posts, comments, pinned coach notes, scripts, and wins. This is home."
+      />
+      <CommunityFeed posts={posts} leaderboard={leaderboard} storageKey={`lf-feed-${program}`} program={program} />
+    </MemberLayout>
   );
 }
 
@@ -500,6 +516,8 @@ export function MemberSection({ section }: { section: string }) {
     "lo-mastery": () => <CommunityFeedView program="mastery" />,
     alliance: () => <CommunityFeedView program="alliance" />,
     community: () => <CommunityFeedView program="mastery" />,
+    today: () => <TodayView program="mastery" />,
+    "alliance-today": () => <TodayView program="alliance" />,
     scorecards: () => <ScorecardWorkspace program="mastery" />,
     "alliance-scorecard": () => <ScorecardWorkspace program="alliance" />,
     trackers: () => <TrackerWorkspaceView program="mastery" />,
@@ -588,13 +606,38 @@ function ProgressTable() {
   );
 }
 
+function CoachReviewQueue() {
+  const needsReview = memberProgressRows.filter((row) => row.status === "Needs review");
+  const watch = memberProgressRows.filter((row) => row.status === "Watch");
+  const missingScorecards = memberProgressRows.filter((row) => row.scorecard !== "Complete");
+  return (
+    <section className="grid gap-4 md:grid-cols-3">
+      {[
+        ["Needs review now", needsReview.length, needsReview.map((r) => r.member).join(", ") || "No one waiting"],
+        ["Watch list", watch.length, watch.map((r) => r.member).join(", ") || "No one slipping"],
+        ["Scorecards not complete", missingScorecards.length, missingScorecards.map((r) => r.member).join(", ") || "All submitted"],
+      ].map(([label, count, detail]) => (
+        <Link
+          key={String(label)}
+          href="/coach-command-center/members/"
+          className="rounded-2xl border border-lf-line bg-white p-5 shadow-card transition hover:border-lf-orange"
+        >
+          <p className="text-xs font-semibold uppercase tracking-wide text-lf-orange">{label}</p>
+          <p className="mt-2 text-4xl font-black text-lf-navy">{count}</p>
+          <p className="mt-2 text-sm text-lf-slate">{detail}</p>
+        </Link>
+      ))}
+    </section>
+  );
+}
+
 export function CoachCommandHome() {
   return (
     <>
       <PageHero
         eyebrow="Coach command center"
-        title="Coach operating dashboard."
-        description="Coach-facing workspace for member progress, weekly scorecards, tracker review, notes, and community response."
+        title="Who needs help today."
+        description="Member review queue, weekly scorecards, tracker review, notes, and community response."
         actions={[
           { href: "/coach-command-center/members/", label: "Review members" },
           { href: "/coach-command-center/notes/", label: "Open notes", variant: "secondary" },
@@ -602,6 +645,7 @@ export function CoachCommandHome() {
       />
       <PortalLayout kind="Coach navigation" pages={coachCommandPages} base="/coach-command-center">
         <div className="grid gap-8">
+          <CoachReviewQueue />
           <ProgressTable />
           <CoachNotesWorkspace notes={coachNotes} members={memberProgressRows.map((row) => row.member)} />
         </div>
@@ -646,11 +690,36 @@ export function ManagerHome() {
       />
       <PortalLayout kind="Manager navigation" pages={managerPages} base="/manager-dashboard">
         <div className="grid gap-8">
+          <AtRiskMembers />
           <CoachLoadTable />
           <ProgramStatusGrid />
         </div>
       </PortalLayout>
     </>
+  );
+}
+
+function AtRiskMembers() {
+  const atRisk = memberProgressRows.filter((row) => row.status !== "On pace");
+  return (
+    <section className="rounded-2xl border border-lf-line bg-white p-5 shadow-card">
+      <p className="text-xs font-semibold uppercase tracking-wide text-lf-orange">At risk</p>
+      <h2 className="h-display mt-2 text-2xl">Members who need attention</h2>
+      <div className="mt-4 grid gap-3">
+        {atRisk.length === 0 && (
+          <p className="text-sm text-lf-slate">No members are slipping this week.</p>
+        )}
+        {atRisk.map((row) => (
+          <div key={row.member} className="flex flex-col gap-1 border-l-2 border-lf-orange pl-4 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p className="text-sm font-bold text-lf-navy">{row.member} · {row.program}</p>
+              <p className="text-sm text-lf-slate">{row.week} · {row.focus} · Scorecard: {row.scorecard}</p>
+            </div>
+            <p className="text-xs font-bold uppercase tracking-wide text-lf-orange">{row.status}</p>
+          </div>
+        ))}
+      </div>
+    </section>
   );
 }
 
@@ -691,11 +760,11 @@ function ProgramStatusGrid() {
           </p>
           <h3 className="h-display mt-2 text-2xl">{row.program}</h3>
           <p className="prose-lf mt-3 text-lf-slate">{row.weeklyFocus}</p>
-          <div className="mt-4 grid gap-3">
-            <p className="rounded-xl bg-lf-orangeSoft p-3 text-sm font-semibold text-lf-orange">
+          <div className="mt-4 grid gap-2 text-sm">
+            <p className="border-l-2 border-lf-orange pl-3 font-semibold text-lf-charcoal">
               Health: {row.health}
             </p>
-            <p className="rounded-xl bg-lf-mist p-3 text-sm text-lf-slate">
+            <p className="border-l-2 border-lf-line pl-3 text-lf-slate">
               Watch: {row.watch}
             </p>
           </div>
@@ -815,13 +884,13 @@ function AdminPrograms() {
           </p>
           <h3 className="h-display mt-2 text-2xl">{program.name}</h3>
           <p className="prose-lf mt-3 text-lf-slate">{program.bestFor}</p>
-          <div className="mt-4 grid gap-2">
+          <ul className="mt-4 grid gap-2">
             {program.includes.map((item) => (
-              <p key={item} className="rounded-xl bg-lf-mist px-3 py-2 text-sm font-semibold text-lf-charcoal">
+              <li key={item} className="border-l-2 border-lf-line pl-3 text-sm font-semibold text-lf-charcoal">
                 {item}
-              </p>
+              </li>
             ))}
-          </div>
+          </ul>
         </article>
       ))}
     </div>
@@ -853,9 +922,9 @@ export function AdminSection({ section }: { section: string }) {
         )}
         {section === "programs" && <AdminPrograms />}
         {section === "resources" && (
-          <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+          <div className="overflow-hidden rounded-2xl border border-lf-line bg-white shadow-card">
             {downloadResources.map((resource) => (
-              <ResourceCard key={resource.title} resource={resource} />
+              <ResourceRow key={resource.title} resource={resource} />
             ))}
           </div>
         )}

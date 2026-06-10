@@ -7,6 +7,7 @@ const primaryNav = [
   { label: "Home", href: "/" },
   { label: "LO Mastery", href: "/lo-mastery-coaching/" },
   { label: "Alliance", href: "/loan-factory-alliance/" },
+  { label: "Apply", href: "/apply/" },
   { label: "Member Area", href: "/member-area/" },
 ];
 
